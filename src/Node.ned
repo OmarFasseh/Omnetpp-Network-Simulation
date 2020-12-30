@@ -13,22 +13,17 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-package section1;
+package mesh;
 
 //
 // TODO auto-generated module
 //
 simple Node
 {
+    parameters:
+        double lambda = default(2.0);
+        int n = default(4);
     gates:
         input in;
         output out;
-    
 }
-
-
-
-
-
-
-

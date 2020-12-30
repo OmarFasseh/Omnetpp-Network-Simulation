@@ -1,9 +1,9 @@
 //
-// Generated file, do not edit! Created by nedtool 5.6 from MyMessage.msg.
+// Generated file, do not edit! Created by nedtool 5.6 from CustomMsg.msg.
 //
 
-#ifndef __MYMESSAGE_M_H
-#define __MYMESSAGE_M_H
+#ifndef __CUSTOMMSG_M_H
+#define __CUSTOMMSG_M_H
 
 #if defined(__clang__)
 #  pragma clang diagnostic ignored "-Wreserved-id-macro"
@@ -24,43 +24,40 @@ typedef  std::bitset<8> bits;
 // }}
 
 /**
- * Class generated from <tt>MyMessage.msg:25</tt> by nedtool.
+ * Class generated from <tt>CustomMsg.msg:26</tt> by nedtool.
  * <pre>
- * packet MyMessage
+ * packet CustomMsg
  * {
- *     //\@customize(true);  // see the generated C++ header for more info
  *     int Seq_Num;
  *     int M_Type;
  *     string M_Payload;
  *     bits mycheckbits;
- *     int sender;
  *     int reciver;
  * }
  * </pre>
  */
-class MyMessage : public ::omnetpp::cPacket
+class CustomMsg : public ::omnetpp::cPacket
 {
   protected:
     int Seq_Num;
     int M_Type;
     ::omnetpp::opp_string M_Payload;
     bits mycheckbits;
-    int sender;
     int reciver;
 
   private:
-    void copy(const MyMessage& other);
+    void copy(const CustomMsg& other);
 
   protected:
     // protected and unimplemented operator==(), to prevent accidental usage
-    bool operator==(const MyMessage&);
+    bool operator==(const CustomMsg&);
 
   public:
-    MyMessage(const char *name=nullptr, short kind=0);
-    MyMessage(const MyMessage& other);
-    virtual ~MyMessage();
-    MyMessage& operator=(const MyMessage& other);
-    virtual MyMessage *dup() const override {return new MyMessage(*this);}
+    CustomMsg(const char *name=nullptr, short kind=0);
+    CustomMsg(const CustomMsg& other);
+    virtual ~CustomMsg();
+    CustomMsg& operator=(const CustomMsg& other);
+    virtual CustomMsg *dup() const override {return new CustomMsg(*this);}
     virtual void parsimPack(omnetpp::cCommBuffer *b) const override;
     virtual void parsimUnpack(omnetpp::cCommBuffer *b) override;
 
@@ -72,17 +69,15 @@ class MyMessage : public ::omnetpp::cPacket
     virtual const char * getM_Payload() const;
     virtual void setM_Payload(const char * M_Payload);
     virtual bits& getMycheckbits();
-    virtual const bits& getMycheckbits() const {return const_cast<MyMessage*>(this)->getMycheckbits();}
+    virtual const bits& getMycheckbits() const {return const_cast<CustomMsg*>(this)->getMycheckbits();}
     virtual void setMycheckbits(const bits& mycheckbits);
-    virtual int getSender() const;
-    virtual void setSender(int sender);
     virtual int getReciver() const;
     virtual void setReciver(int reciver);
 };
 
-inline void doParsimPacking(omnetpp::cCommBuffer *b, const MyMessage& obj) {obj.parsimPack(b);}
-inline void doParsimUnpacking(omnetpp::cCommBuffer *b, MyMessage& obj) {obj.parsimUnpack(b);}
+inline void doParsimPacking(omnetpp::cCommBuffer *b, const CustomMsg& obj) {obj.parsimPack(b);}
+inline void doParsimUnpacking(omnetpp::cCommBuffer *b, CustomMsg& obj) {obj.parsimUnpack(b);}
 
 
-#endif // ifndef __MYMESSAGE_M_H
+#endif // ifndef __CUSTOMMSG_M_H
 

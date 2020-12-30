@@ -13,25 +13,17 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-//
-// TODO generated message class
-//
-cplusplus {{
-#include <bitset>
-typedef  std::bitset<8> bits;
-}}
-class noncobject bits;
+package mesh;
 
-packet MyMessage {
-    //@customize(true);  // see the generated C++ header for more info
-    int Seq_Num;
-    int M_Type;
-    string M_Payload;
-    bits mycheckbits;
-    int sender;
-    int reciver;
+//
+// TODO auto-generated module
+//
+simple Hub
+{
+    parameters:
+        double lambda = default(2.0);
+        int n = default(4);
+    gates:
+        input ins[];
+        output outs[];
 }
-
-
-
-

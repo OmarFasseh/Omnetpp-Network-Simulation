@@ -13,11 +13,12 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-#ifndef __SECTION1_NODE_H_
-#define __SECTION1_NODE_H_
+#ifndef __MESH_NODE_H_
+#define __MESH_NODE_H_
 
-#include <omnetpp.h>
+#include "MyMessage_m.h"
 #include <bitset>
+#include "GlobalFunctions.h"
 using namespace omnetpp;
 
 /**
@@ -25,13 +26,11 @@ using namespace omnetpp;
  */
 class Node : public cSimpleModule
 {
-    public:
-        int counter;
-
-    protected:
-
-        virtual void initialize();
-        virtual void handleMessage(cMessage *msg);
+  protected:
+    int senderNum;
+    void cSend(MyMessage * msg, int dest, int source);
+    virtual void initialize();
+    virtual void handleMessage(cMessage *msg);
 };
 
 #endif

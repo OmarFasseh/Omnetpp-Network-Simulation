@@ -1,21 +1,20 @@
-package section1;
+package mesh;
 
 @license(LGPL);
-//
-// TODO documentation
-//
-network Network
-{
-    @display("bgb=359,163");
-    submodules:
-        Tic: Node {
-            @display("p=30,61;i=block/join");
-        }
-        Toc: Node {
-            @display("p=186,61");
-        }
-    connections:
-        Tic.out --> Toc.in;
-        Toc.out --> Tic.in;
-}
 
+import ned.IdealChannel;
+
+network Mesh
+{
+    parameters:
+        int n = default(5);
+        @display("bgb=327,200");
+    submodules:
+        nodes[n]: Node;
+        hub: Hub;
+    connections:
+        for i=0..sizeof(nodes)-1 {
+            nodes[i].out --> IdealChannel --> hub.ins++;
+            nodes[i].in <-- IdealChannel <-- hub.outs++;
+        }
+}

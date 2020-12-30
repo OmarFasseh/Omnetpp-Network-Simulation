@@ -1,12 +1,12 @@
 #
-# OMNeT++/OMNEST Makefile for Lab4_Student
+# OMNeT++/OMNEST Makefile for Project
 #
 # This file was generated with the command:
 #  opp_makemake -f --deep
 #
 
 # Name of target to be created (-o option)
-TARGET = Lab4_Student$(D)$(EXE_SUFFIX)
+TARGET = Project$(D)$(EXE_SUFFIX)
 TARGET_DIR = .
 
 # User interface (uncomment one) (-u option)
@@ -30,10 +30,11 @@ PROJECTRELATIVE_PATH = src
 O = $(PROJECT_OUTPUT_DIR)/$(CONFIGNAME)/$(PROJECTRELATIVE_PATH)
 
 # Object files for local .cc, .msg and .sm files
-OBJS = $O/hub.o $O/Node.o $O/MyMessage_m.o
+OBJS = $O/GlobalFunctions.o $O/hub.o $O/Node.o $O/CustomMsg_m.o $O/MyMessage_m.o
 
 # Message files
 MSGFILES = \
+    CustomMsg.msg \
     MyMessage.msg
 
 # SM files

@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by nedtool 5.6 from MyMessage.msg.
+// Generated file, do not edit! Created by nedtool 5.6 from CustomMsg.msg.
 //
 
 // Disable warnings about unused variables, empty switch stmts, etc:
@@ -26,7 +26,7 @@
 
 #include <iostream>
 #include <sstream>
-#include "MyMessage_m.h"
+#include "CustomMsg_m.h"
 
 namespace omnetpp {
 
@@ -177,26 +177,25 @@ inline std::ostream& operator<<(std::ostream& out, const std::vector<T,A>& vec)
     return out;
 }
 
-Register_Class(MyMessage)
+Register_Class(CustomMsg)
 
-MyMessage::MyMessage(const char *name, short kind) : ::omnetpp::cPacket(name,kind)
+CustomMsg::CustomMsg(const char *name, short kind) : ::omnetpp::cPacket(name,kind)
 {
     this->Seq_Num = 0;
     this->M_Type = 0;
-    this->sender = 0;
     this->reciver = 0;
 }
 
-MyMessage::MyMessage(const MyMessage& other) : ::omnetpp::cPacket(other)
+CustomMsg::CustomMsg(const CustomMsg& other) : ::omnetpp::cPacket(other)
 {
     copy(other);
 }
 
-MyMessage::~MyMessage()
+CustomMsg::~CustomMsg()
 {
 }
 
-MyMessage& MyMessage::operator=(const MyMessage& other)
+CustomMsg& CustomMsg::operator=(const CustomMsg& other)
 {
     if (this==&other) return *this;
     ::omnetpp::cPacket::operator=(other);
@@ -204,105 +203,92 @@ MyMessage& MyMessage::operator=(const MyMessage& other)
     return *this;
 }
 
-void MyMessage::copy(const MyMessage& other)
+void CustomMsg::copy(const CustomMsg& other)
 {
     this->Seq_Num = other.Seq_Num;
     this->M_Type = other.M_Type;
     this->M_Payload = other.M_Payload;
     this->mycheckbits = other.mycheckbits;
-    this->sender = other.sender;
     this->reciver = other.reciver;
 }
 
-void MyMessage::parsimPack(omnetpp::cCommBuffer *b) const
+void CustomMsg::parsimPack(omnetpp::cCommBuffer *b) const
 {
     ::omnetpp::cPacket::parsimPack(b);
     doParsimPacking(b,this->Seq_Num);
     doParsimPacking(b,this->M_Type);
     doParsimPacking(b,this->M_Payload);
     doParsimPacking(b,this->mycheckbits);
-    doParsimPacking(b,this->sender);
     doParsimPacking(b,this->reciver);
 }
 
-void MyMessage::parsimUnpack(omnetpp::cCommBuffer *b)
+void CustomMsg::parsimUnpack(omnetpp::cCommBuffer *b)
 {
     ::omnetpp::cPacket::parsimUnpack(b);
     doParsimUnpacking(b,this->Seq_Num);
     doParsimUnpacking(b,this->M_Type);
     doParsimUnpacking(b,this->M_Payload);
     doParsimUnpacking(b,this->mycheckbits);
-    doParsimUnpacking(b,this->sender);
     doParsimUnpacking(b,this->reciver);
 }
 
-int MyMessage::getSeq_Num() const
+int CustomMsg::getSeq_Num() const
 {
     return this->Seq_Num;
 }
 
-void MyMessage::setSeq_Num(int Seq_Num)
+void CustomMsg::setSeq_Num(int Seq_Num)
 {
     this->Seq_Num = Seq_Num;
 }
 
-int MyMessage::getM_Type() const
+int CustomMsg::getM_Type() const
 {
     return this->M_Type;
 }
 
-void MyMessage::setM_Type(int M_Type)
+void CustomMsg::setM_Type(int M_Type)
 {
     this->M_Type = M_Type;
 }
 
-const char * MyMessage::getM_Payload() const
+const char * CustomMsg::getM_Payload() const
 {
     return this->M_Payload.c_str();
 }
 
-void MyMessage::setM_Payload(const char * M_Payload)
+void CustomMsg::setM_Payload(const char * M_Payload)
 {
     this->M_Payload = M_Payload;
 }
 
-bits& MyMessage::getMycheckbits()
+bits& CustomMsg::getMycheckbits()
 {
     return this->mycheckbits;
 }
 
-void MyMessage::setMycheckbits(const bits& mycheckbits)
+void CustomMsg::setMycheckbits(const bits& mycheckbits)
 {
     this->mycheckbits = mycheckbits;
 }
 
-int MyMessage::getSender() const
-{
-    return this->sender;
-}
-
-void MyMessage::setSender(int sender)
-{
-    this->sender = sender;
-}
-
-int MyMessage::getReciver() const
+int CustomMsg::getReciver() const
 {
     return this->reciver;
 }
 
-void MyMessage::setReciver(int reciver)
+void CustomMsg::setReciver(int reciver)
 {
     this->reciver = reciver;
 }
 
-class MyMessageDescriptor : public omnetpp::cClassDescriptor
+class CustomMsgDescriptor : public omnetpp::cClassDescriptor
 {
   private:
     mutable const char **propertynames;
   public:
-    MyMessageDescriptor();
-    virtual ~MyMessageDescriptor();
+    CustomMsgDescriptor();
+    virtual ~CustomMsgDescriptor();
 
     virtual bool doesSupport(omnetpp::cObject *obj) const override;
     virtual const char **getPropertyNames() const override;
@@ -324,24 +310,24 @@ class MyMessageDescriptor : public omnetpp::cClassDescriptor
     virtual void *getFieldStructValuePointer(void *object, int field, int i) const override;
 };
 
-Register_ClassDescriptor(MyMessageDescriptor)
+Register_ClassDescriptor(CustomMsgDescriptor)
 
-MyMessageDescriptor::MyMessageDescriptor() : omnetpp::cClassDescriptor("MyMessage", "omnetpp::cPacket")
+CustomMsgDescriptor::CustomMsgDescriptor() : omnetpp::cClassDescriptor("CustomMsg", "omnetpp::cPacket")
 {
     propertynames = nullptr;
 }
 
-MyMessageDescriptor::~MyMessageDescriptor()
+CustomMsgDescriptor::~CustomMsgDescriptor()
 {
     delete[] propertynames;
 }
 
-bool MyMessageDescriptor::doesSupport(omnetpp::cObject *obj) const
+bool CustomMsgDescriptor::doesSupport(omnetpp::cObject *obj) const
 {
-    return dynamic_cast<MyMessage *>(obj)!=nullptr;
+    return dynamic_cast<CustomMsg *>(obj)!=nullptr;
 }
 
-const char **MyMessageDescriptor::getPropertyNames() const
+const char **CustomMsgDescriptor::getPropertyNames() const
 {
     if (!propertynames) {
         static const char *names[] = {  nullptr };
@@ -352,19 +338,19 @@ const char **MyMessageDescriptor::getPropertyNames() const
     return propertynames;
 }
 
-const char *MyMessageDescriptor::getProperty(const char *propertyname) const
+const char *CustomMsgDescriptor::getProperty(const char *propertyname) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     return basedesc ? basedesc->getProperty(propertyname) : nullptr;
 }
 
-int MyMessageDescriptor::getFieldCount() const
+int CustomMsgDescriptor::getFieldCount() const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
-    return basedesc ? 6+basedesc->getFieldCount() : 6;
+    return basedesc ? 5+basedesc->getFieldCount() : 5;
 }
 
-unsigned int MyMessageDescriptor::getFieldTypeFlags(int field) const
+unsigned int CustomMsgDescriptor::getFieldTypeFlags(int field) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -378,12 +364,11 @@ unsigned int MyMessageDescriptor::getFieldTypeFlags(int field) const
         FD_ISEDITABLE,
         FD_ISCOMPOUND,
         FD_ISEDITABLE,
-        FD_ISEDITABLE,
     };
-    return (field>=0 && field<6) ? fieldTypeFlags[field] : 0;
+    return (field>=0 && field<5) ? fieldTypeFlags[field] : 0;
 }
 
-const char *MyMessageDescriptor::getFieldName(int field) const
+const char *CustomMsgDescriptor::getFieldName(int field) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -396,13 +381,12 @@ const char *MyMessageDescriptor::getFieldName(int field) const
         "M_Type",
         "M_Payload",
         "mycheckbits",
-        "sender",
         "reciver",
     };
-    return (field>=0 && field<6) ? fieldNames[field] : nullptr;
+    return (field>=0 && field<5) ? fieldNames[field] : nullptr;
 }
 
-int MyMessageDescriptor::findField(const char *fieldName) const
+int CustomMsgDescriptor::findField(const char *fieldName) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     int base = basedesc ? basedesc->getFieldCount() : 0;
@@ -410,12 +394,11 @@ int MyMessageDescriptor::findField(const char *fieldName) const
     if (fieldName[0]=='M' && strcmp(fieldName, "M_Type")==0) return base+1;
     if (fieldName[0]=='M' && strcmp(fieldName, "M_Payload")==0) return base+2;
     if (fieldName[0]=='m' && strcmp(fieldName, "mycheckbits")==0) return base+3;
-    if (fieldName[0]=='s' && strcmp(fieldName, "sender")==0) return base+4;
-    if (fieldName[0]=='r' && strcmp(fieldName, "reciver")==0) return base+5;
+    if (fieldName[0]=='r' && strcmp(fieldName, "reciver")==0) return base+4;
     return basedesc ? basedesc->findField(fieldName) : -1;
 }
 
-const char *MyMessageDescriptor::getFieldTypeString(int field) const
+const char *CustomMsgDescriptor::getFieldTypeString(int field) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -429,12 +412,11 @@ const char *MyMessageDescriptor::getFieldTypeString(int field) const
         "string",
         "bits",
         "int",
-        "int",
     };
-    return (field>=0 && field<6) ? fieldTypeStrings[field] : nullptr;
+    return (field>=0 && field<5) ? fieldTypeStrings[field] : nullptr;
 }
 
-const char **MyMessageDescriptor::getFieldPropertyNames(int field) const
+const char **CustomMsgDescriptor::getFieldPropertyNames(int field) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -447,7 +429,7 @@ const char **MyMessageDescriptor::getFieldPropertyNames(int field) const
     }
 }
 
-const char *MyMessageDescriptor::getFieldProperty(int field, const char *propertyname) const
+const char *CustomMsgDescriptor::getFieldProperty(int field, const char *propertyname) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -460,7 +442,7 @@ const char *MyMessageDescriptor::getFieldProperty(int field, const char *propert
     }
 }
 
-int MyMessageDescriptor::getFieldArraySize(void *object, int field) const
+int CustomMsgDescriptor::getFieldArraySize(void *object, int field) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -468,13 +450,13 @@ int MyMessageDescriptor::getFieldArraySize(void *object, int field) const
             return basedesc->getFieldArraySize(object, field);
         field -= basedesc->getFieldCount();
     }
-    MyMessage *pp = (MyMessage *)object; (void)pp;
+    CustomMsg *pp = (CustomMsg *)object; (void)pp;
     switch (field) {
         default: return 0;
     }
 }
 
-const char *MyMessageDescriptor::getFieldDynamicTypeString(void *object, int field, int i) const
+const char *CustomMsgDescriptor::getFieldDynamicTypeString(void *object, int field, int i) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -482,13 +464,13 @@ const char *MyMessageDescriptor::getFieldDynamicTypeString(void *object, int fie
             return basedesc->getFieldDynamicTypeString(object,field,i);
         field -= basedesc->getFieldCount();
     }
-    MyMessage *pp = (MyMessage *)object; (void)pp;
+    CustomMsg *pp = (CustomMsg *)object; (void)pp;
     switch (field) {
         default: return nullptr;
     }
 }
 
-std::string MyMessageDescriptor::getFieldValueAsString(void *object, int field, int i) const
+std::string CustomMsgDescriptor::getFieldValueAsString(void *object, int field, int i) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -496,19 +478,18 @@ std::string MyMessageDescriptor::getFieldValueAsString(void *object, int field, 
             return basedesc->getFieldValueAsString(object,field,i);
         field -= basedesc->getFieldCount();
     }
-    MyMessage *pp = (MyMessage *)object; (void)pp;
+    CustomMsg *pp = (CustomMsg *)object; (void)pp;
     switch (field) {
         case 0: return long2string(pp->getSeq_Num());
         case 1: return long2string(pp->getM_Type());
         case 2: return oppstring2string(pp->getM_Payload());
         //case 3: {std::stringstream out; out << pp->getMycheckbits(); return out.str();}
-        case 4: return long2string(pp->getSender());
-        case 5: return long2string(pp->getReciver());
+        case 4: return long2string(pp->getReciver());
         default: return "";
     }
 }
 
-bool MyMessageDescriptor::setFieldValueAsString(void *object, int field, int i, const char *value) const
+bool CustomMsgDescriptor::setFieldValueAsString(void *object, int field, int i, const char *value) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -516,18 +497,17 @@ bool MyMessageDescriptor::setFieldValueAsString(void *object, int field, int i, 
             return basedesc->setFieldValueAsString(object,field,i,value);
         field -= basedesc->getFieldCount();
     }
-    MyMessage *pp = (MyMessage *)object; (void)pp;
+    CustomMsg *pp = (CustomMsg *)object; (void)pp;
     switch (field) {
         case 0: pp->setSeq_Num(string2long(value)); return true;
         case 1: pp->setM_Type(string2long(value)); return true;
         case 2: pp->setM_Payload((value)); return true;
-        case 4: pp->setSender(string2long(value)); return true;
-        case 5: pp->setReciver(string2long(value)); return true;
+        case 4: pp->setReciver(string2long(value)); return true;
         default: return false;
     }
 }
 
-const char *MyMessageDescriptor::getFieldStructName(int field) const
+const char *CustomMsgDescriptor::getFieldStructName(int field) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -541,7 +521,7 @@ const char *MyMessageDescriptor::getFieldStructName(int field) const
     };
 }
 
-void *MyMessageDescriptor::getFieldStructValuePointer(void *object, int field, int i) const
+void *CustomMsgDescriptor::getFieldStructValuePointer(void *object, int field, int i) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -549,7 +529,7 @@ void *MyMessageDescriptor::getFieldStructValuePointer(void *object, int field, i
             return basedesc->getFieldStructValuePointer(object, field, i);
         field -= basedesc->getFieldCount();
     }
-    MyMessage *pp = (MyMessage *)object; (void)pp;
+    CustomMsg *pp = (CustomMsg *)object; (void)pp;
     switch (field) {
         case 3: return (void *)(&pp->getMycheckbits()); break;
         default: return nullptr;

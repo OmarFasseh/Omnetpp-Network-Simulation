@@ -14,139 +14,76 @@
 // 
 
 #include "Node.h"
-#include "MyMessage_m.h"
 Define_Module(Node);
-
-
 
 void Node::initialize()
 {
-    counter = 0;
-    // TODO - Generated method body
-    if ( strcmp(getName(),"Tic")==0)
+    double interval = exponential(1 / par("lambda").doubleValue());
+    scheduleAt(simTime() + interval, new cMessage(""));
+}
+
+void Node::cSend(MyMessage * msg, int dest, int source)
+{
+    std:: string s ="hi there!";
+    std::bitset<8> p{0};
+    for(int i=0;i<s.size();i++)
     {
-        MyMessage_Base * msg = new MyMessage_Base("Hello");
-        std::string inp = "hi there!";
-
-        msg->setM_Payload(inp.c_str());
-        msg->setM_Type(0);
-//        msg->setSeq_Num(counter);
-
-        std::bitset<8> checkSum(0);
-        for(int i = 0;i<inp.size();i++){
-                std::bitset<8> bs(inp[i]);
-                checkSum= checkSum^  bs;
-            }
-        charCountSend(msg);
-
-        std::bitset<8> ffs(255);
-        std::bitset<8> CS(ffs.to_ulong() - checkSum.to_ulong());
-        msg->setMycheckbits(checkSum);
-
-
-       int rand=uniform(0,1)*10;
-       if(rand>6) // prob to delay the message
-       {
-           int charrand=uniform(0,inp.size());
-            std::string mypayload= msg->getM_Payload();
-            mypayload[charrand]=mypayload[charrand]+5;
-           msg->setM_Payload(mypayload.c_str());
-       }
-       send(msg,"out");
+        std::bitset<8> y(s[i]);
+        p=p^y;
     }
+    msg->setMycheckbits(p);
+    int rand=uniform(0,1)*10;
+    if(rand>6)
+    {
+        int rand2=uniform(0,1)*s.size();
+        s[rand2]=s[rand2]+1;
+    }
+    msg->setM_Payload(s.c_str());
+    msg->setM_Type(0);
+    msg->setSeq_Num(0);
+    msg->setReciver(dest);
+    msg->setSender(source);
+    send(msg,"out");
 }
 
 void Node::handleMessage(cMessage *msg)
 {
-    // TODO - Generated method body
-    MyMessage_Base *mmsg = check_and_cast<MyMessage_Base *>(msg);
-    if(mmsg->getM_Type() == 0){// check id msg correct or not
-        EV << "char count: " << charCountRec(mmsg);
-        bits sum = mmsg->getMycheckbits();
-        std::bitset<8> checkSum(0);
-        std::string pl =  mmsg->getM_Payload();
-        for(int i = 0;i<pl.size();i++){
-            std::bitset<8> bs(pl[i]);
-            checkSum= checkSum^  bs;
-        }
-        if(checkSum.to_ulong() == sum.to_ulong()){// if check sum with no error
+    //MyMessage *mmsg = check_and_cast<MyMessage *>(msg);
+    if (msg->isSelfMessage()) { //Host wants to send
 
-            MyMessage_Base * nmsg = new MyMessage_Base("Ack");
-            nmsg->setM_Type(1);
-            nmsg->setSeq_Num(mmsg->getSeq_Num());
-            send(nmsg,"out");
-        }
-        else{// if check sum with error
+        int rand;
+        do { //Avoid sending to yourself
+            rand = uniform(0, getParentModule()->par("n").intValue());
+        } while(rand == getIndex());
+        delete msg;
+        std::stringstream ss ;
+        ss << rand;
+        MyMessage *mmsg = new MyMessage(ss.str().c_str());
+        cSend(mmsg,rand,getIndex());
+        /*
+        std::stringstream ss ;
+        ss << rand;
+        EV << "Sending "<< ss.str() <<" from source " << getIndex() << "\n";
+        delete msg;
+        msg = new cMessage(ss.str().c_str());
+        send(msg, "out");*/
 
-            MyMessage_Base * nmsg = new MyMessage_Base("Nack");
-            nmsg->setM_Type(2);
-            nmsg->setSeq_Num(mmsg->getSeq_Num());
-            send(nmsg,"out");
-        }
+        double interval = exponential(1 / par("lambda").doubleValue());
+        EV << ". Scheduled a new packet after " << interval << "s";
+        scheduleAt(simTime() + interval, new cMessage(""));
     }
-    else if(mmsg->getM_Type() == 1){// print if the sent msg is correct or not
-        EV<<"received positive ack at sender  with sequence number ...   ";
-        EV << mmsg->getSeq_Num();
-
-        MyMessage_Base * nmsg = new MyMessage_Base("Hello");
-        std::string inp = "hi there!";
-
-        nmsg->setM_Payload(inp.c_str());
-        nmsg->setM_Type(0);
-        counter = counter + 1;
-        nmsg->setSeq_Num(counter);
-
-        std::bitset<8> checkSum(0);
-        for(int i = 0;i<inp.size();i++){
-                std::bitset<8> bs(inp[i]);
-                checkSum= checkSum^  bs;
-            }
-        nmsg->setMycheckbits(checkSum);
-
-
-        int rand=uniform(0,1)*10;
-        if(rand>6) // prob to delay the message
-        {
-            int charrand=uniform(0,inp.size());
-            std::string mypayload= nmsg->getM_Payload();
-            mypayload[charrand]=mypayload[charrand]+5;
-            nmsg->setM_Payload(mypayload.c_str());
-        }
-      send(nmsg,"out");
+    else {
+        //atoi functions converts a string to int
+        //Check if this is the proper destination
+        MyMessage *mmsg = check_and_cast<MyMessage *>(msg);
+        if (mmsg->getReciver() == getIndex())
+            bubble(mmsg->getM_Payload());
+        else
+            bubble("Wrong destination");
+        //TODO: delete msg;
     }
-    else if(mmsg->getM_Type() == 2){// print if the sent msg is correct or not
-        EV<<"received negative ack at sender  with sequence number ...   ";
-        EV << mmsg->getSeq_Num();
-
-        MyMessage_Base * nmsg = new MyMessage_Base("Hello");
-        std::string inp = "hi there!";
-
-        nmsg->setM_Payload(inp.c_str());
-        nmsg->setM_Type(0);
-        nmsg->setSeq_Num(counter);
-
-        std::bitset<8> checkSum(0);
-        for(int i = 0;i<inp.size();i++){
-                std::bitset<8> bs(inp[i]);
-                checkSum= checkSum^  bs;
-            }
-        nmsg->setMycheckbits(checkSum);
-
-
-        int rand=uniform(0,1)*10;
-        if(rand>6) // prob to delay the message
-        {
-            int charrand=uniform(0,inp.size());
-            std::string mypayload= nmsg->getM_Payload();
-            mypayload[charrand]=mypayload[charrand]+5;
-            nmsg->setM_Payload(mypayload.c_str());
-        }
-      send(nmsg,"out");
-    }
-
-
-
 }
+
 
 
 

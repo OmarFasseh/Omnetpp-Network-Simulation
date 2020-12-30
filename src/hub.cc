@@ -14,7 +14,7 @@
 // 
 
 #include "hub.h"
-
+#include "MyMessage_m.h"
 Define_Module(Hub);
 
 void Hub::initialize()
@@ -25,6 +25,27 @@ void Hub::initialize()
 void Hub::handleMessage(cMessage *msg)
 {
 
-        send(msg, "outs", atoi(msg->getName()));
+    MyMessage *mmsg = check_and_cast<MyMessage *>(msg);
+    int modE=uniform(0,1)*10;
+    if(modE>6) //30%
+    {
+        std:: string s = mmsg->getM_Payload();
+        int rand2=uniform(0,1)*s.size();
+        s[rand2]=s[rand2]+1;
+        mmsg->setM_Payload(s.c_str());
+     }
+    int errored=uniform(0,1)*2;
+    if(errored){
+        int rand=uniform(0,1)*3;
+        if(rand==0)
+            sendDelayed(msg, 2.0, "outs",mmsg->getReciver());
+        else if(rand==1){
+            MyMessage * copyMsg = mmsg->dup();
+            send(copyMsg,   "outs",mmsg->getReciver());
+            send(msg,       "outs",mmsg->getReciver());
+        }
+    }
+    else
+        send(msg, "outs", mmsg->getReciver());
 
 }

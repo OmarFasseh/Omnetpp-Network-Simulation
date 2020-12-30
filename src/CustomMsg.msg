@@ -16,22 +16,17 @@
 //
 // TODO generated message class
 //
+
 cplusplus {{
 #include <bitset>
 typedef  std::bitset<8> bits;
 }}
 class noncobject bits;
 
-packet MyMessage {
-    //@customize(true);  // see the generated C++ header for more info
+packet CustomMsg {
     int Seq_Num;
     int M_Type;
     string M_Payload;
     bits mycheckbits;
-    int sender;
     int reciver;
 }
-
-
-
-
