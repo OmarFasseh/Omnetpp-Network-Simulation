@@ -16,11 +16,38 @@
 #include "hub.h"
 #include "MyMessage_m.h"
 Define_Module(Hub);
-
+#include "vector"
+#include <fstream>
 void Hub::initialize()
 {
-    // TODO - Generated method body
-    //pairs
+    //pairs + start time
+
+    int n=par("n").intValue();
+    std::vector<int> pool (n,0);
+    int pair1,pair2;
+
+    for(int i =0;i<n;i++){
+        pool[i]=i;
+    }
+    for(int i =0;i<n/2;i++){
+        int rand=uniform(0,1)*pool.size();
+        pair1=pool[rand];
+        pool.erase(pool.begin()+rand);
+
+        rand=uniform(0,1)*pool.size();
+        pair2=pool[rand];
+        pool.erase(pool.begin()+rand);
+
+        //pair1,pair2
+        /*
+        std::fstream my_file;
+        std::string file_name="../txtFiles/"+std::to_string(n)+;
+        my_file.open(file_name, std::ios::out);
+        if(!my_file)
+            finished=true;
+      */
+    }
+
 }
 
 void Hub::handleMessage(cMessage *msg)

@@ -27,6 +27,7 @@ using namespace omnetpp;
  */
 class Node : public cSimpleModule
 {
+
   protected:
     int senderNum;
     int n=-1;
@@ -35,6 +36,8 @@ class Node : public cSimpleModule
     void cSend(MyMessage * msg, int dest);
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
+  public:
+    int reciver;
 };
 
 #endif
