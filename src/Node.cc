@@ -30,11 +30,6 @@ void Node::initialize()
         finished = false;
 }
 
-void Node::setReciver(int dest)
-{
-    reciver=dest;
-}
-
 void Node::cSend(MyMessage * msg, int dest)
 {
 

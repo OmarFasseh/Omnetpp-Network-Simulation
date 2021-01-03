@@ -39,8 +39,8 @@ void Hub::initialize()
         pair2=pool[rand];
         pool.erase(pool.begin()+rand);
         //((Hub *)getParentModule()->getSubmodule("hub"))->test();
-        ((Node*)getParentModule()->getSubmodule("nodes",pair1))->setReciver(pair2);
-        ((Node*)getParentModule()->getSubmodule("nodes",pair2))->setReciver(pair1);
+        ((Node*)getParentModule()->getSubmodule("nodes",pair1))->reciver=pair2;
+        ((Node*)getParentModule()->getSubmodule("nodes",pair2))->reciver=pair1;
         EV << pair1 << pair2<< " ";
 
         //TODO: remove comments

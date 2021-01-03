@@ -38,7 +38,6 @@ class Node : public cSimpleModule
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
   public:
-    void setReciver(int dest);
     int reciver;
 };
 
