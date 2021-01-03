@@ -30,7 +30,7 @@ void Node::initialize()
         finished = false;
 }
 
-void Node::cSend(MyMessage * msg, int dest)
+void Node::mSend(MyMessage * msg)
 {
 
     std:: string s;
@@ -51,7 +51,7 @@ void Node::cSend(MyMessage * msg, int dest)
 
     msg->setM_Type(0);
     msg->setSeq_Num(0);
-    msg->setReciver(dest);
+    msg->setReciver(reciver);
     msg->setSender(n);
 
     // Error
@@ -87,7 +87,7 @@ void Node::handleMessage(cMessage *msg)
         std::stringstream ss ;
         ss << reciver;
         MyMessage *mmsg = new MyMessage(ss.str().c_str());
-        cSend(mmsg,reciver);
+        mSend(mmsg);
         if(finished) return;
         double interval = exponential(1 / par("lambda").doubleValue());
         EV << ". Scheduled a new packet after " << interval << "s";
