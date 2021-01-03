@@ -17,5 +17,5 @@ network Mesh
             nodes[i].out --> IdealChannel --> hub.ins++;
             nodes[i].in <-- IdealChannel <-- hub.outs++;
         }
-    
+
 }

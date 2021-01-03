@@ -14,6 +14,7 @@
 // 
 
 #include "hub.h"
+#include "Node.h"
 #include "MyMessage_m.h"
 Define_Module(Hub);
 #include "vector"
@@ -37,7 +38,15 @@ void Hub::initialize()
         rand=uniform(0,1)*pool.size();
         pair2=pool[rand];
         pool.erase(pool.begin()+rand);
+        //((Hub *)getParentModule()->getSubmodule("hub"))->test();
+        ((Node*)getParentModule()->getSubmodule("nodes",pair1))->setReciver(pair2);
+        ((Node*)getParentModule()->getSubmodule("nodes",pair2))->setReciver(pair1);
+        EV << pair1 << pair2<< " ";
 
+        //TODO: remove comments
+        //((Node **)getParentModule()->getSubmodule("nodes"))[0]->setReciver(pair2);
+        //ptr=(osg::Node *)getParentModule()->getSubmodule("nodes")[pair2];
+        //ptr->setReciver(pair1);
         //pair1,pair2
         /*
         std::fstream my_file;

@@ -34,9 +34,11 @@ class Node : public cSimpleModule
     std::fstream my_file;
     bool finished = false;
     void cSend(MyMessage * msg, int dest);
+
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
   public:
+    void setReciver(int dest);
     int reciver;
 };
 

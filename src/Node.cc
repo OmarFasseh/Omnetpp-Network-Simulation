@@ -30,6 +30,11 @@ void Node::initialize()
         finished = false;
 }
 
+void Node::setReciver(int dest)
+{
+    reciver=dest;
+}
+
 void Node::cSend(MyMessage * msg, int dest)
 {
 
@@ -83,17 +88,11 @@ void Node::cSend(MyMessage * msg, int dest)
 void Node::handleMessage(cMessage *msg)
 {
     if (msg->isSelfMessage()) { //Host wants to send
-        //pairs
-        int rand;
-        do { //Avoid sending to yourself
-            rand = uniform(0, getParentModule()->par("n").intValue());
-        } while(rand == getIndex());
-        //
         delete msg;
         std::stringstream ss ;
-        ss << rand;
+        ss << reciver;
         MyMessage *mmsg = new MyMessage(ss.str().c_str());
-        cSend(mmsg,rand);
+        cSend(mmsg,reciver);
         if(finished) return;
         double interval = exponential(1 / par("lambda").doubleValue());
         EV << ". Scheduled a new packet after " << interval << "s";
