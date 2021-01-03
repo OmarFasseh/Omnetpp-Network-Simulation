@@ -23,6 +23,9 @@ simple Node
     parameters:
         double lambda = default(2.0);
         int n = default(4);
+        int modPercent = default(30);
+        int chanPercent=default(50);
+        int modVal =default(10);
     gates:
         input in;
         output out;

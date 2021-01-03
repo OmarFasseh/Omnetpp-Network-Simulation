@@ -19,6 +19,7 @@
 #include "MyMessage_m.h"
 #include <bitset>
 #include "GlobalFunctions.h"
+#include <fstream>
 using namespace omnetpp;
 
 /**
@@ -28,7 +29,10 @@ class Node : public cSimpleModule
 {
   protected:
     int senderNum;
-    void cSend(MyMessage * msg, int dest, int source);
+    int n=-1;
+    std::fstream my_file;
+    bool finished = false;
+    void cSend(MyMessage * msg, int dest);
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
 };

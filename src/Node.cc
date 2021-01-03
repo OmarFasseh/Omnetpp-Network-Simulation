@@ -20,11 +20,27 @@ void Node::initialize()
 {
     double interval = exponential(1 / par("lambda").doubleValue());
     scheduleAt(simTime() + interval, new cMessage(""));
+    int n = getIndex();
+    //read file n
+    std::string file_name="../txtFiles/"+std::to_string(n)+".txt";
+    my_file.open(file_name, std::ios::in);
+    if(!my_file)
+        finished=true;
+    else
+        finished = false;
 }
 
-void Node::cSend(MyMessage * msg, int dest, int source)
+void Node::cSend(MyMessage * msg, int dest)
 {
-    std:: string s ="hi there!";
+
+    std:: string s;
+    //new line only on inc
+    getline(my_file, s);
+    if(my_file.eof())
+    {
+        my_file.close();
+        finished=true;
+    }
     std::bitset<8> p{0};
     for(int i=0;i<s.size();i++)
     {
@@ -32,42 +48,53 @@ void Node::cSend(MyMessage * msg, int dest, int source)
         p=p^y;
     }
     msg->setMycheckbits(p);
-    int rand=uniform(0,1)*10;
-    if(rand>6)
-    {
-        int rand2=uniform(0,1)*s.size();
-        s[rand2]=s[rand2]+1;
-    }
-    msg->setM_Payload(s.c_str());
+
     msg->setM_Type(0);
     msg->setSeq_Num(0);
     msg->setReciver(dest);
-    msg->setSender(source);
-    send(msg,"out");
+    msg->setSender(n);
+
+    // Error
+
+    int modE=uniform(0,1)*100;
+    if(modE>par("modPercent").intValue()) //ini
+    {
+        int rand2=uniform(0,1)*s.size();
+        int errorVal = uniform(-1,1)*par("modVal").intValue(); //ini
+        s[rand2]=s[rand2]+errorVal;
+    }
+    msg->setM_Payload(s.c_str());
+    int errored=uniform(0,1)*100;
+    if(errored<par("chanPercent").intValue()){ //ini
+        int rand=uniform(0,1)*3;
+        if(rand==0)
+            sendDelayed(msg, 2.0, "out");
+        else if(rand==1){
+            MyMessage * copyMsg = msg->dup();
+            send(copyMsg,   "out");
+            send(msg,       "out");
+        }
+        //2 lost msg
+    }
+    else
+        send(msg, "out");
 }
 
 void Node::handleMessage(cMessage *msg)
 {
-    //MyMessage *mmsg = check_and_cast<MyMessage *>(msg);
     if (msg->isSelfMessage()) { //Host wants to send
-
+        //pairs
         int rand;
         do { //Avoid sending to yourself
             rand = uniform(0, getParentModule()->par("n").intValue());
         } while(rand == getIndex());
+        //
         delete msg;
         std::stringstream ss ;
         ss << rand;
         MyMessage *mmsg = new MyMessage(ss.str().c_str());
-        cSend(mmsg,rand,getIndex());
-        /*
-        std::stringstream ss ;
-        ss << rand;
-        EV << "Sending "<< ss.str() <<" from source " << getIndex() << "\n";
-        delete msg;
-        msg = new cMessage(ss.str().c_str());
-        send(msg, "out");*/
-
+        cSend(mmsg,rand);
+        if(finished) return;
         double interval = exponential(1 / par("lambda").doubleValue());
         EV << ". Scheduled a new packet after " << interval << "s";
         scheduleAt(simTime() + interval, new cMessage(""));
