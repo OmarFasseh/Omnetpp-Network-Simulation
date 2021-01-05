@@ -15,9 +15,9 @@
 
 #include "hub.h"
 #include "Node.h"
+
 #include "MyMessage_m.h"
 Define_Module(Hub);
-#include "vector"
 #include <fstream>
 void Hub::initialize()
 {
@@ -26,6 +26,7 @@ void Hub::initialize()
     int n=par("n").intValue();
     std::vector<int> pool (n,0);
     int pair1,pair2;
+
 
     for(int i =0;i<n;i++){
         pool[i]=i;
@@ -42,20 +43,13 @@ void Hub::initialize()
         ((Node*)getParentModule()->getSubmodule("nodes",pair1))->reciver=pair2;
         ((Node*)getParentModule()->getSubmodule("nodes",pair2))->reciver=pair1;
         EV << pair1 << pair2<< " ";
+        pairs.push_back(std::make_pair(pair1,pair2));
 
-        //TODO: remove comments
-        //((Node **)getParentModule()->getSubmodule("nodes"))[0]->setReciver(pair2);
-        //ptr=(osg::Node *)getParentModule()->getSubmodule("nodes")[pair2];
-        //ptr->setReciver(pair1);
-        //pair1,pair2
-        /*
-        std::fstream my_file;
-        std::string file_name="../txtFiles/"+std::to_string(n)+;
-        my_file.open(file_name, std::ios::out);
-        if(!my_file)
-            finished=true;
-      */
+        MyMessage *mmsg = new MyMessage("control_message");
+        mmsg->setM_Type(20);// 20 hub control
+        sendDelayed(mmsg,i+1+simTime(),"outs",pair1);
     }
+
 
 }
 

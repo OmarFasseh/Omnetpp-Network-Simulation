@@ -18,8 +18,8 @@ Define_Module(Node);
 
 void Node::initialize()
 {
-    double interval = exponential(1 / par("lambda").doubleValue());
-    scheduleAt(simTime() + interval, new cMessage(""));
+    //double interval = exponential(1 / par("lambda").doubleValue());
+   // scheduleAt(simTime() + interval, new cMessage(""));
     int n = getIndex();
     //read file n
     std::string file_name="../txtFiles/"+std::to_string(n)+".txt";
@@ -30,16 +30,17 @@ void Node::initialize()
         finished = false;
 }
 
-void Node::mSend(MyMessage * msg)
+void Node::mSend(MyMessage * msg,int ack)
 {
 
     std:: string s;
     //new line only on inc
     getline(my_file, s);
-    if(my_file.eof())
+    if(my_file.eof()||s.size()==0)
     {
         my_file.close();
         finished=true;
+        return;
     }
     std::bitset<8> p{0};
     for(int i=0;i<s.size();i++)
@@ -49,7 +50,7 @@ void Node::mSend(MyMessage * msg)
     }
     msg->setMycheckbits(p);
 
-    msg->setM_Type(0);
+    msg->setM_Type(ack);
     msg->setSeq_Num(0);
     msg->setReciver(reciver);
     msg->setSender(n);
@@ -68,40 +69,50 @@ void Node::mSend(MyMessage * msg)
     if(errored<par("chanPercent").intValue()){ //ini
         int rand=uniform(0,1)*3;
         if(rand==0)
-            sendDelayed(msg, 2.0, "out");
+            sendDelayed(msg, 0.01, "out");
         else if(rand==1){
             MyMessage * copyMsg = msg->dup();
-            send(copyMsg,   "out");
-            send(msg,       "out");
+            sendDelayed(copyMsg,0.002,"out");
+            sendDelayed(msg,0.0021,"out");
         }
         //2 lost msg
     }
     else
-        send(msg, "out");
+        sendDelayed(msg,0.002,"out");
 }
 
 void Node::handleMessage(cMessage *msg)
 {
-    if (msg->isSelfMessage()) { //Host wants to send
+    MyMessage *mmsg = check_and_cast<MyMessage *>(msg);
+    if (mmsg->getM_Type()==20) { //Host wants to send
         delete msg;
         std::stringstream ss ;
         ss << reciver;
         MyMessage *mmsg = new MyMessage(ss.str().c_str());
-        mSend(mmsg);
-        if(finished) return;
-        double interval = exponential(1 / par("lambda").doubleValue());
-        EV << ". Scheduled a new packet after " << interval << "s";
-        scheduleAt(simTime() + interval, new cMessage(""));
+        mSend(mmsg,0);
+        if(finished)
+        {
+            MyMessage *mmsg = new MyMessage("control message");
+            mmsg->setM_Type(20);// 20 hub control
+            mmsg->setReciver(reciver);
+            mmsg->setM_Payload("error");
+            send(mmsg,"out");
+            return;
+        }
+     //   double interval = exponential(1 / par("lambda").doubleValue());
+      //  EV << ". Scheduled a new packet after " << interval << "s";
+     //   scheduleAt(simTime() + interval, new cMessage(""));
     }
     else {
-        //atoi functions converts a string to int
-        //Check if this is the proper destination
-        MyMessage *mmsg = check_and_cast<MyMessage *>(msg);
-        if (mmsg->getReciver() == getIndex())
-            bubble(mmsg->getM_Payload());
-        else
-            bubble("Wrong destination");
-        //TODO: delete msg;
+        //MyMessage *mmsg = check_and_cast<MyMessage *>(msg);
+        bubble(mmsg->getM_Payload());
+        std::stringstream ss ;
+        ss << reciver;
+        MyMessage *mmsg = new MyMessage(ss.str().c_str());
+        mSend(mmsg,0);
+        if(finished)
+            return;
+
     }
 }
 

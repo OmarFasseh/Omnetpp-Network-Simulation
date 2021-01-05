@@ -17,7 +17,8 @@
 #define __MESH_HUB_H_
 
 #include <omnetpp.h>
-
+#include <utility>
+#include <vector>
 using namespace omnetpp;
 
 /**
@@ -28,6 +29,7 @@ class Hub : public cSimpleModule
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
+    std::vector<std::pair<int,int> >pairs ; //TODO:delete
 };
 
 #endif
