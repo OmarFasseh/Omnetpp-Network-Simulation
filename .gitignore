@@ -1,0 +1,13 @@
+out/clang-release/src/.last-copts
+.settings/language.settings.xml
+out/clang-release/src/.last-copts
+out/clang-release/src/CustomMsg_m.o.d
+out/clang-release/src/GlobalFunctions.o.d
+out/clang-release/src/hub.o
+out/clang-release/src/hub.o.d
+out/clang-release/src/MyMessage_m.o.d
+out/clang-release/src/Node.o
+out/clang-release/src/Node.o.d
+src/.project
+src/Makefile
+src/Project.exe
