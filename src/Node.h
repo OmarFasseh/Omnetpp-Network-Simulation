@@ -20,8 +20,11 @@
 #include <bitset>
 #include "GlobalFunctions.h"
 #include <fstream>
-using namespace omnetpp;
+#include <cmath>
+#include <vector>
 
+using namespace omnetpp;
+using namespace std;
 /**
  * TODO - Generated class
  */
@@ -39,6 +42,12 @@ class Node : public cSimpleModule
     virtual void handleMessage(cMessage *msg);
   public:
     int reciver;
+    vector<bool> setHamming(string payload);
+    string setMessagePayload(vector<bool> &payloadBits, int charCount, int &paddingSize);
+    vector<bool> checkHamming(vector<bool> &ham, int charCount);
+    vector<bool> removePadding(string payload, int &charCount, int paddingSize);
+    string decodeHamming(vector<bool> &msg);
+
 };
 
 #endif

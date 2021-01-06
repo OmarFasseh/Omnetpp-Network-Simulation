@@ -15,7 +15,7 @@ void csend(MyMessage * msg, int dest, int source)
         std::bitset<8> y(s[i]);
         p=p^y;
     }
-    msg->setMycheckbits(p);
+    //msg->setMycheckbits(p);
     int rand,rand2;
     //int rand=uniform(0,1)*10;
     if(rand>6)
@@ -24,7 +24,7 @@ void csend(MyMessage * msg, int dest, int source)
         s[rand2]=s[rand2]+1;
     }
     msg->setM_Payload(s.c_str());
-    msg->setM_Type(0);
+    //msg->setM_Type(0);
     msg->setSeq_Num(0);
     msg->setReciver(dest);
     msg->setSender(source);
