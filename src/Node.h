@@ -36,7 +36,7 @@ class Node : public cSimpleModule
     int n=-1;
     std::fstream my_file;
     bool finished = false;
-    void mSend(MyMessage * msg);
+    void mSend(MyMessage * msg,int ack);
 
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
