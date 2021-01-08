@@ -39,9 +39,9 @@ void Node::mSend(int ack)
 {
 
     //If window slided and we dont have the window full of data, read data if possible.
-    while (senderWindowSize != senderQueueSize)
+    while (senderWindowSize != senderData.size())
     {
-        std::string s;
+        string s;
         //new line only on inc
         getline(my_file, s);
         if (my_file.eof() || s.size() == 0)
@@ -58,13 +58,13 @@ void Node::mSend(int ack)
     {
         string messageType = "0"; //0 Means message has data
         string tmp = messageType;
-        tmp += (char)receiverR; //Ack for receiver to slide the receriver's sending window
+        tmp += (char)(receiverR + '0'); //Ack for receiver to slide the receriver's sending window
         //
-        tmp += (char)((sequenceNumber + i) % (senderWindowSize + 1)); //To tell receiver the sequence of message being sent
+        tmp += (char)((sequenceNumber + i) % (senderWindowSize + 1) + '0'); //To tell receiver the sequence of message being sent
         tmp += senderData.front();
+        const char *de5ra1 = tmp.c_str();
         senderData.pop();
         senderData.push(tmp);
-
         //Hamming and framing
         vector<bool> messageWithHaming = setHamming(tmp);
         int paddingSize = 0;
@@ -78,9 +78,9 @@ void Node::mSend(int ack)
         MyMessage *timer = new MyMessage("timer");
         timers[(sequenceNumber + i) % (senderWindowSize + 1)] = timer;
         timer->setM_Type(50);
-        scheduleAt(simTime() + 0.1, timer);
-        errorAndSend(msg, msgToSend);
-        //Send with/without error
+        scheduleAt(simTime() + 0.1 * (i + 1), timer);
+        const char *de5raaaaaaaa = msgToSend.c_str();
+        errorAndSendWithDelay(msg, msgToSend, 0.001 * (i + 1));
     }
 
     //Sending ack only
@@ -88,7 +88,7 @@ void Node::mSend(int ack)
     {
         string messageType = "1"; //1 Means message has no data (only ack)
         string tmp = messageType;
-        tmp += (char)receiverR; //Ack for receiver to slide the receriver's sending window
+        tmp += (char)(receiverR + '0'); //Ack for receiver to slide the receriver's sending window
 
         //Hamming and framing
         vector<bool> messageWithHaming = setHamming(tmp);
@@ -100,37 +100,38 @@ void Node::mSend(int ack)
         msg->setM_Type(99);
         msg->setReciver(reciver);
         msg->setSender(n);
-        errorAndSend(msg, msgToSend);
+        errorAndSendWithDelay(msg, msgToSend, 0.001);
         //Send with/without error
     }
 }
-void Node::errorAndSend(MyMessage *msg, string s)
+void Node::errorAndSendWithDelay(MyMessage *msg, string s, double delay)
 {
     first = false;
     int modE = uniform(0, 1) * 100;
-    if (modE > par("modPercent").intValue()) //ini
+    if (modE < par("modPercent").intValue()) //ini
     {
         int rand2 = uniform(0, 1) * s.size();
         int errorVal = uniform(-1, 1) * par("modVal").intValue(); //ini
         s[rand2] = s[rand2] + errorVal;
     }
     msg->setM_Payload(s.c_str()); //TODO: remove cast
+    const char * de5ra = s.c_str();
     int errored = uniform(0, 1) * 100;
     if (errored < par("chanPercent").intValue())
     { //ini
         int rand = uniform(0, 1) * 3;
         if (rand == 0)
-            sendDelayed(msg, 0.01, "out");
+            sendDelayed(msg, 0.01 + delay, "out");
         else if (rand == 1)
         {
             MyMessage *copyMsg = msg->dup();
-            sendDelayed(copyMsg, 0.002, "out");
-            sendDelayed(msg, 0.0021, "out");
+            sendDelayed(copyMsg, 0.002 + delay, "out");
+            sendDelayed(msg, 0.0021 + delay, "out");
         }
         //2 lost msg
     }
     else
-        sendDelayed(msg, 0.002, "out");
+        sendDelayed(msg, 0.002 + delay, "out");
 }
 void Node::handleMessage(cMessage *msg)
 {
@@ -138,9 +139,8 @@ void Node::handleMessage(cMessage *msg)
     if (mmsg->getM_Type() == 20)
     { //Host wants to send
         delete msg;
-        std::stringstream ss;
+        stringstream ss;
         ss << reciver;
-        MyMessage *mmsg = new MyMessage(ss.str().c_str());
         mSend(0);
         if (finished && first)
         {
@@ -159,11 +159,15 @@ void Node::handleMessage(cMessage *msg)
     else if (mmsg->getM_Type() == 99)
     {
         int charCount;
+        //General functions
+        string s;
+
+        const char * shit = mmsg->getM_Payload();
         vector<bool> receiverBits = removePadding(mmsg->getM_Payload(), charCount, mmsg->getPaddingSize());
         receiverBits = checkHamming(receiverBits, charCount);
         string recMsg = BitsToString(receiverBits);
         char messageType = recMsg[0];
-        int rec = (int)recMsg[1];
+        int rec = (int)recMsg[1] - '0';
         int i = 0;
         while (rec != sequenceNumber)
         {
@@ -172,7 +176,7 @@ void Node::handleMessage(cMessage *msg)
                 cancelAndDelete(timers[(sequenceNumber + i) % (senderWindowSize + 1)]);
             }
             timers[(sequenceNumber + i) % (senderWindowSize + 1)] = NULL;
-            sequenceNumber++;
+            sequenceNumber = (sequenceNumber + 1) % (senderWindowSize + 1);
             if (!senderData.empty())
                 senderData.pop();
             i++;
@@ -180,12 +184,12 @@ void Node::handleMessage(cMessage *msg)
 
         if (messageType == '0')
         {
-            if (recMsg[2] == receiverR)
+            if (recMsg[2] - '0' == receiverR)
             {
                 receiverR++;
             }
-            char const *data = &recMsg[3];
-            bubble(data);
+            recMsg = recMsg.substr(3, recMsg.size() - 3);
+            bubble(recMsg.c_str());
         }
         mSend(1);
         if (finished)
@@ -226,22 +230,10 @@ vector<bool> Node::setHamming(string payload)
         r++;
     }
     vector<bool> ham(m * 8 + r, false);
-    //General functions
     vector<bool> payloadBits(m * 8, false);
-    int k = 0;
-    for (int i = 0; i < payload.size(); i++)
-    {
-        bitset<8> newChar(payload[i]);
-        for (int z = 0; z < 8; z++)
-        {
-            if (newChar[z])
-            {
-                payloadBits[k] = true;
-            }
-            k++;
-        }
-    }
-    //General functions end
+    //General functions
+    StringToBits(payload, payloadBits);
+
     EV << "Payload to be sent (without hamming): ";
     for (int i = 0; i < payloadBits.size(); i++)
     {
@@ -293,30 +285,11 @@ string Node::setMessagePayload(vector<bool> &payloadBits, int charCount, int &pa
         payloadBits.insert(payloadBits.begin(), 0);
 
     string msgPayload = to_string(charCount);
-    char character = 0;
-    int j = 0;
     EV << "Message sent in bits : ";
     //General functions
-    for (int i = 0; i < payloadBits.size(); i++)
-    {
-        if (j == 8)
-        {
-            msgPayload += character;
-            character = payloadBits[i];
-            j = 0;
-        }
-        else
-        {
-            character = character << 1;
-            character |= payloadBits[i];
-        }
-        j++;
-    }
-    if (j == 8)
-    {
-        msgPayload += character;
-    }
-    //General functions end
+    string s = BitsToString(payloadBits);
+    msgPayload += s;
+
     for (int i = 0; i < payloadBits.size(); i++)
     {
         EV << payloadBits[i];
@@ -325,113 +298,8 @@ string Node::setMessagePayload(vector<bool> &payloadBits, int charCount, int &pa
     return msgPayload;
 }
 
-vector<bool> Node::checkHamming(vector<bool> &ham, int charCount)
-{
-    int r = 0;
-    charCount--;
-    while ((charCount * 8) + r + 1 > pow(2, r))
-    {
-        r++;
-    }
-
-    EV << endl
-       << "Message received with hamming: ";
-    for (int i = 0; i < ham.size(); i++)
-    {
-        EV << ham[i] << " ";
-    }
-    EV << endl;
-    int j = 0;
-    vector<bool> errorBits(r, 0);
-    int errorPos = 0;
-
-    for (int i = 0; i < r; i++)
-    {
-        int step = pow(2, i);
-        for (j = step - 1; j < charCount * 8 + r; j += (2 * step))
-        {
-            for (int z = 0; z < step; z++)
-            {
-                if (ham[step - 1] == ham[j + z] && j + z != step - 1)
-                {
-                    ham[step - 1] = false;
-                }
-                else if (j + z != step - 1)
-                {
-                    ham[step - 1] = true;
-                }
-            }
-        }
-        errorBits[i] = ham[step - 1];
-    }
-    for (int i = r; i >= 0; i--)
-    {
-        errorPos = errorPos << 1;
-        errorPos |= errorBits[i];
-    }
-    if (errorPos != 0)
-    {
-        EV << "Error at " << errorPos - 1 << endl;
-        ham[errorPos - 1] = !ham[errorPos - 1];
-        EV << "Message after correction : " << endl;
-        for (int i = 0; i < ham.size(); i++)
-        {
-            EV << ham[i] << " ";
-        }
-        EV << endl;
-    }
-    else
-    {
-        EV << "No error found." << endl;
-    }
-    j = 0;
-    vector<bool> payloadBits(charCount * 8, false);
-    for (int i = 1; i < charCount * 8 + r; i++)
-    {
-        if ((int)log2(i) != log2(i))
-        {
-            payloadBits[j++] = ham[i - 1];
-        }
-    }
-    EV << "Payload after correction: ";
-    for (int i = 0; i < payloadBits.size(); i++)
-    {
-        EV << payloadBits[i] << " ";
-    }
-    EV << endl;
-    return payloadBits;
-}
-
-vector<bool> Node::removePadding(string payload, int &charCount, int paddingSize)
-{
-    EV << "STR ReC : " << payload << endl;
-    charCount = atoi(&payload[0]);
-    int m = payload.size() - 1;
-    vector<bool> payloadBits(m * 8, false);
-    int k = m * 8 - 1;
-    for (int i = payload.size() - 1; i > 0; i--)
-    {
-        bitset<8> newChar(payload[i]);
-        for (int z = 0; z < 8; z++)
-        {
-            if (newChar[z])
-            {
-                payloadBits[k] = true;
-            }
-            k--;
-        }
-    }
-    for (int i = 0; i < payloadBits.size(); i++)
-        EV << " " << payloadBits[i];
-    int payloadSize = m * 8 - paddingSize;
-    vector<bool> messageWithHamming(payloadSize);
-    EV << "Message with hamming rec :";
-    for (int i = 0; i < payloadSize; i++)
-    {
-        messageWithHamming[i] = payloadBits[i + paddingSize];
-    }
-    return messageWithHamming;
-}
 string Node::decodeHamming(vector<bool> &msg)
 {
+    string s = "";
+    return s;
 }

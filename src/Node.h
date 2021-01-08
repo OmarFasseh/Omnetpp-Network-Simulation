@@ -45,7 +45,7 @@ protected:
   int sequenceNumber;
   vector<MyMessage *> timers;
   void mSend(int ack);
-  void errorAndSend(MyMessage *msg, string s);
+  void errorAndSendWithDelay(MyMessage *msg, string s, double delay);
   virtual void initialize();
   virtual void handleMessage(cMessage *msg);
 
@@ -53,8 +53,6 @@ public:
   int reciver;
   vector<bool> setHamming(string payload);
   string setMessagePayload(vector<bool> &payloadBits, int charCount, int &paddingSize);
-  vector<bool> checkHamming(vector<bool> &ham, int charCount);
-  vector<bool> removePadding(string payload, int &charCount, int paddingSize);
   string decodeHamming(vector<bool> &msg);
 };
 
