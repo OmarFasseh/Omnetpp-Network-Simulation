@@ -1,12 +1,13 @@
-../out/clang-release/src/GlobalFunctions.o: GlobalFunctions.cc \
-  GlobalFunctions.h MyMessage_m.h \
+../out/clang-debug/src/hub.o: hub.cc hub.h \
   D:/Downloads/College/omnetpp-5.6.2-src-windows/omnetpp-5.6.2/include\omnetpp.h \
-  Node.h
+  Node.h MyMessage_m.h GlobalFunctions.h
 
-GlobalFunctions.h:
-
-MyMessage_m.h:
+hub.h:
 
 D:/Downloads/College/omnetpp-5.6.2-src-windows/omnetpp-5.6.2/include\omnetpp.h:
 
 Node.h:
+
+MyMessage_m.h:
+
+GlobalFunctions.h:

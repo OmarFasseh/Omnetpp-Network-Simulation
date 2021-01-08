@@ -25,8 +25,8 @@ class noncobject bits;
 packet MyMessage {
     //@customize(true);  // see the generated C++ header for more info
     int Seq_Num;
-    string M_Payload;
     int M_Type;
+    string M_Payload;
     int sender;
     int reciver;
     int paddingSize;

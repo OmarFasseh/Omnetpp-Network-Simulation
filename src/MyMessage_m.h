@@ -30,6 +30,7 @@ typedef  std::bitset<8> bits;
  * {
  *     //\@customize(true);  // see the generated C++ header for more info
  *     int Seq_Num;
+ *     int M_Type;
  *     string M_Payload;
  *     int sender;
  *     int reciver;
@@ -41,6 +42,7 @@ class MyMessage : public ::omnetpp::cPacket
 {
   protected:
     int Seq_Num;
+    int M_Type;
     ::omnetpp::opp_string M_Payload;
     int sender;
     int reciver;
@@ -65,6 +67,8 @@ class MyMessage : public ::omnetpp::cPacket
     // field getter/setter methods
     virtual int getSeq_Num() const;
     virtual void setSeq_Num(int Seq_Num);
+    virtual int getM_Type() const;
+    virtual void setM_Type(int M_Type);
     virtual const char * getM_Payload() const;
     virtual void setM_Payload(const char * M_Payload);
     virtual int getSender() const;

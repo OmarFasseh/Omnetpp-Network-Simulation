@@ -3,5 +3,5 @@
 #include "Node.h"
 #include <omnetpp.h>
 
-
-void csend(MyMessage * msg, int dest, int source);
+using namespace std;
+string BitsToString(vector<bool> &receiverBits);

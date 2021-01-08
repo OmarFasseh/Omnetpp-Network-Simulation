@@ -1,12 +1,12 @@
 #
-# OMNeT++/OMNEST Makefile for Omnetpp-Network-Simulation
+# OMNeT++/OMNEST Makefile for Project
 #
 # This file was generated with the command:
 #  opp_makemake -f --deep
 #
 
 # Name of target to be created (-o option)
-TARGET = Omnetpp-Network-Simulation$(D)$(EXE_SUFFIX)
+TARGET = Project$(D)$(EXE_SUFFIX)
 TARGET_DIR = .
 
 # User interface (uncomment one) (-u option)
