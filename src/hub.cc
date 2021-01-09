@@ -24,6 +24,7 @@ void Hub::initialize()
     //pairs + start time
 
     int n = par("n").intValue();
+    int pairsDelay = par("pairsDelay").doubleValue();
     std::vector<int> pool(n, 0);
     int pair1, pair2;
 
@@ -48,21 +49,48 @@ void Hub::initialize()
 
         MyMessage *mmsg = new MyMessage("control_message");
         mmsg->setM_Type(20); // 20 hub control
-        sendDelayed(mmsg, i + 1 + simTime(), "outs", pair1);
+        sendDelayed(mmsg, i * pairsDelay + simTime(), "outs", pair1);
     }
+    MyMessage *mmsg = new MyMessage("END");
+    mmsg->setM_Type(95); //simulation finished
+    scheduleAt(n * pairsDelay + simTime(), mmsg);
 }
 
 void Hub::handleMessage(cMessage *msg)
 {
 
     MyMessage *mmsg = check_and_cast<MyMessage *>(msg);
-    /*if (mmsg->getM_Type() == 99){
-        string recMsg = unHam(mmsg->getM_Payload(), mmsg->getPaddingSize());
-        if(recMsg[0]=='0'){
-            recMsg = recMsg.substr(3,recMsg.size()-2);
+    if (mmsg->getM_Type() == 95)
+    {
+        int n = par("n").intValue();
+        std::fstream f;
+        f.open("../txtFiles/outputStats.txt", fstream::out);
+        for (int i = 0; i < n; i++)
+        {
+            f << "Node " << i << "\n";
+            f << "Dropped frames= " << ((Node *)getParentModule()->getSubmodule("nodes", i))->droppedFrames << "\n";
+            f << "Generated frames= " << ((Node *)getParentModule()->getSubmodule("nodes", i))->generatedFrames << "\n";
+            f << "Retransmitted frames= " << ((Node *)getParentModule()->getSubmodule("nodes", i))->retransmittedFrames << "\n";
+            f << "------------------------\n";
+        }
+        f << "Stats: \n";
+        //f << "Total Dropped frames= " << ((Node *)getParentModule()->getSubmodule("nodes", 0))->totalDF << "\n";
+        //f << "Total Generated frames= " << ((Node *)getParentModule()->getSubmodule("nodes", 0))->totalGF << "\n";
+        //f << "Total Retransmitted frames= " << ((Node *)getParentModule()->getSubmodule("nodes", 0))->totalRF << "\n";
+
+        return;
+    }
+
+    if (mmsg->getM_Type() == 99)
+    {
+        string recMsg = unHam(mmsg->getM_Payload(), mmsg->getPayloadSize(), mmsg->getPaddingSize());
+        if (recMsg[0] == '0')
+        {
+            recMsg = recMsg.substr(3, recMsg.size() - 2);
             bubble(recMsg.c_str());
-        }else
+        }
+        else
             bubble(to_string(recMsg[0]).c_str());
-    }*/
+    }
     send(msg, "outs", mmsg->getReciver());
 }

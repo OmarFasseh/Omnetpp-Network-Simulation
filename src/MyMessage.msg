@@ -30,6 +30,7 @@ packet MyMessage {
     int sender;
     int reciver;
     int paddingSize;
+    int payloadSize;
 }
 
 

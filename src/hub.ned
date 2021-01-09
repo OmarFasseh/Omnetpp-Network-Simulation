@@ -23,6 +23,7 @@ simple Hub
     parameters:
         double lambda = default(2.0);
         int n = default(4);
+        double pairsDelay = default(30);
     gates:
         input ins[];
         output outs[];

@@ -186,6 +186,7 @@ MyMessage::MyMessage(const char *name, short kind) : ::omnetpp::cPacket(name,kin
     this->sender = 0;
     this->reciver = 0;
     this->paddingSize = 0;
+    this->payloadSize = 0;
 }
 
 MyMessage::MyMessage(const MyMessage& other) : ::omnetpp::cPacket(other)
@@ -213,6 +214,7 @@ void MyMessage::copy(const MyMessage& other)
     this->sender = other.sender;
     this->reciver = other.reciver;
     this->paddingSize = other.paddingSize;
+    this->payloadSize = other.payloadSize;
 }
 
 void MyMessage::parsimPack(omnetpp::cCommBuffer *b) const
@@ -224,6 +226,7 @@ void MyMessage::parsimPack(omnetpp::cCommBuffer *b) const
     doParsimPacking(b,this->sender);
     doParsimPacking(b,this->reciver);
     doParsimPacking(b,this->paddingSize);
+    doParsimPacking(b,this->payloadSize);
 }
 
 void MyMessage::parsimUnpack(omnetpp::cCommBuffer *b)
@@ -235,6 +238,7 @@ void MyMessage::parsimUnpack(omnetpp::cCommBuffer *b)
     doParsimUnpacking(b,this->sender);
     doParsimUnpacking(b,this->reciver);
     doParsimUnpacking(b,this->paddingSize);
+    doParsimUnpacking(b,this->payloadSize);
 }
 
 int MyMessage::getSeq_Num() const
@@ -295,6 +299,16 @@ int MyMessage::getPaddingSize() const
 void MyMessage::setPaddingSize(int paddingSize)
 {
     this->paddingSize = paddingSize;
+}
+
+int MyMessage::getPayloadSize() const
+{
+    return this->payloadSize;
+}
+
+void MyMessage::setPayloadSize(int payloadSize)
+{
+    this->payloadSize = payloadSize;
 }
 
 class MyMessageDescriptor : public omnetpp::cClassDescriptor
@@ -362,7 +376,7 @@ const char *MyMessageDescriptor::getProperty(const char *propertyname) const
 int MyMessageDescriptor::getFieldCount() const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
-    return basedesc ? 6+basedesc->getFieldCount() : 6;
+    return basedesc ? 7+basedesc->getFieldCount() : 7;
 }
 
 unsigned int MyMessageDescriptor::getFieldTypeFlags(int field) const
@@ -380,8 +394,9 @@ unsigned int MyMessageDescriptor::getFieldTypeFlags(int field) const
         FD_ISEDITABLE,
         FD_ISEDITABLE,
         FD_ISEDITABLE,
+        FD_ISEDITABLE,
     };
-    return (field>=0 && field<6) ? fieldTypeFlags[field] : 0;
+    return (field>=0 && field<7) ? fieldTypeFlags[field] : 0;
 }
 
 const char *MyMessageDescriptor::getFieldName(int field) const
@@ -399,8 +414,9 @@ const char *MyMessageDescriptor::getFieldName(int field) const
         "sender",
         "reciver",
         "paddingSize",
+        "payloadSize",
     };
-    return (field>=0 && field<6) ? fieldNames[field] : nullptr;
+    return (field>=0 && field<7) ? fieldNames[field] : nullptr;
 }
 
 int MyMessageDescriptor::findField(const char *fieldName) const
@@ -413,6 +429,7 @@ int MyMessageDescriptor::findField(const char *fieldName) const
     if (fieldName[0]=='s' && strcmp(fieldName, "sender")==0) return base+3;
     if (fieldName[0]=='r' && strcmp(fieldName, "reciver")==0) return base+4;
     if (fieldName[0]=='p' && strcmp(fieldName, "paddingSize")==0) return base+5;
+    if (fieldName[0]=='p' && strcmp(fieldName, "payloadSize")==0) return base+6;
     return basedesc ? basedesc->findField(fieldName) : -1;
 }
 
@@ -431,8 +448,9 @@ const char *MyMessageDescriptor::getFieldTypeString(int field) const
         "int",
         "int",
         "int",
+        "int",
     };
-    return (field>=0 && field<6) ? fieldTypeStrings[field] : nullptr;
+    return (field>=0 && field<7) ? fieldTypeStrings[field] : nullptr;
 }
 
 const char **MyMessageDescriptor::getFieldPropertyNames(int field) const
@@ -505,6 +523,7 @@ std::string MyMessageDescriptor::getFieldValueAsString(void *object, int field, 
         case 3: return long2string(pp->getSender());
         case 4: return long2string(pp->getReciver());
         case 5: return long2string(pp->getPaddingSize());
+        case 6: return long2string(pp->getPayloadSize());
         default: return "";
     }
 }
@@ -525,6 +544,7 @@ bool MyMessageDescriptor::setFieldValueAsString(void *object, int field, int i, 
         case 3: pp->setSender(string2long(value)); return true;
         case 4: pp->setReciver(string2long(value)); return true;
         case 5: pp->setPaddingSize(string2long(value)); return true;
+        case 6: pp->setPayloadSize(string2long(value)); return true;
         default: return false;
     }
 }

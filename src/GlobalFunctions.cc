@@ -6,13 +6,14 @@
  */
 #include "GlobalFunctions.h"
 using namespace omnetpp;
+#include <bits/stdc++.h> /* reverse*/
 
-string BitsToString(vector<bool> &receiverBits)
+string BitsToStringDecode(vector<bool> &receiverBits)
 {
     char character = 0;
     int j = 0;
     string data = "";
-    for (int i = 0; i < receiverBits.size(); i++)
+    for (int i = receiverBits.size() - 1; i >= 0; i--)
     {
         if (j == 8)
         {
@@ -31,6 +32,7 @@ string BitsToString(vector<bool> &receiverBits)
     {
         data += character;
     }
+    reverse(data.begin(), data.end());
     return data;
 }
 void StringToBits(string payload, vector<bool> &payloadBits)
@@ -50,14 +52,14 @@ void StringToBits(string payload, vector<bool> &payloadBits)
     }
 }
 
-vector<bool> removePadding(string payload, int &charCount, int paddingSize)
+vector<bool> removePadding(string payload, int payloadSize, int &charCount, int paddingSize)
 {
     EV << "STR ReC : " << payload << endl;
-    charCount = atoi(&payload[0]);
-    int m = payload.size() - 1;
+    charCount = (int)(payload[0]);
+    int m = payloadSize - 1;
     vector<bool> payloadBits(m * 8, false);
     int k = m * 8 - 1;
-    for (int i = payload.size() - 1; i > 0; i--)
+    for (int i = payloadSize - 1; i > 0; i--)
     {
         bitset<8> newChar(payload[i]);
         for (int z = 0; z < 8; z++)
@@ -71,11 +73,11 @@ vector<bool> removePadding(string payload, int &charCount, int paddingSize)
     }
 
     for (int i = 0; i < payloadBits.size(); i++)
-            EV <<" "<< payloadBits[i];
-    int payloadSize = m * 8 - paddingSize;
-    vector<bool> messageWithHamming(payloadSize);
+        EV << " " << payloadBits[i];
+    int payloadSize1 = m * 8 - paddingSize;
+    vector<bool> messageWithHamming(payloadSize1);
 
-    for (int i = 0; i < payloadSize; i++)
+    for (int i = 0; i < payloadSize1; i++)
     {
         messageWithHamming[i] = payloadBits[i + paddingSize];
     }
@@ -90,11 +92,13 @@ vector<bool> checkHamming(vector<bool> &ham, int charCount)
         r++;
     }
 
-    EV << endl << "Message received with hamming: ";
-        for(int i=0;i<ham.size();i++){
-            EV << ham[i]<<" ";
-        }
-        EV << endl;
+    EV << endl
+       << "Message received with hamming: ";
+    for (int i = 0; i < ham.size(); i++)
+    {
+        EV << ham[i] << " ";
+    }
+    EV << endl;
 
     int j = 0;
     vector<bool> errorBits(r, 0);
@@ -148,21 +152,21 @@ vector<bool> checkHamming(vector<bool> &ham, int charCount)
             payloadBits[j++] = ham[i - 1];
         }
     }
-
+    /*
     EV << "Payload after correction: ";
-        for(int i=0;i<payloadBits.size();i++){
-            EV << payloadBits[i]<<" ";
-        }
-        EV << endl;
-
+    for (int i = 0; i < payloadBits.size(); i++)
+    {
+        EV << payloadBits[i] << " ";
+    }
+    EV << endl;
+    */
     return payloadBits;
 }
-string unHam(string payload, int paddingSize)
+string unHam(const char *payload, int payloadSize, int paddingSize)
 {
     int charCount;
-    vector<bool> ham = removePadding(payload, charCount, paddingSize);
-    vector<bool> payloadBits = checkHamming(ham, charCount);
-    /*
+    vector<bool> ham = removePadding(payload, payloadSize, charCount, paddingSize);
+    //vector<bool> payloadBits = checkHamming(ham, charCount);
     int r = 0;
     charCount--;
     while ((charCount * 8) + r + 1 > pow(2, r))
@@ -177,8 +181,8 @@ string unHam(string payload, int paddingSize)
         {
             payloadBits[j++] = ham[i - 1];
         }
-    }*/
-    string recMsg = BitsToString(payloadBits);
+    }
+    string recMsg = BitsToStringDecode(payloadBits);
 
     return recMsg;
 }

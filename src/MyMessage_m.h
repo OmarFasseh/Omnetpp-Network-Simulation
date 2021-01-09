@@ -35,6 +35,7 @@ typedef  std::bitset<8> bits;
  *     int sender;
  *     int reciver;
  *     int paddingSize;
+ *     int payloadSize;
  * }
  * </pre>
  */
@@ -47,6 +48,7 @@ class MyMessage : public ::omnetpp::cPacket
     int sender;
     int reciver;
     int paddingSize;
+    int payloadSize;
 
   private:
     void copy(const MyMessage& other);
@@ -77,6 +79,8 @@ class MyMessage : public ::omnetpp::cPacket
     virtual void setReciver(int reciver);
     virtual int getPaddingSize() const;
     virtual void setPaddingSize(int paddingSize);
+    virtual int getPayloadSize() const;
+    virtual void setPayloadSize(int payloadSize);
 };
 
 inline void doParsimPacking(omnetpp::cCommBuffer *b, const MyMessage& obj) {obj.parsimPack(b);}
