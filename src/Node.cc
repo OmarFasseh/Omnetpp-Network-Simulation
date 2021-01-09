@@ -212,8 +212,8 @@ void Node::handleMessage(cMessage *msg)
         int charCount;
         //General functions
         vector<bool> receiverBits = removePadding(mmsg->getM_Payload(), mmsg->getPayloadSize(), charCount, mmsg->getPaddingSize());
-        receiverBits = checkHamming(receiverBits, charCount);
-        string recMsg = BitsToStringDecode(receiverBits);
+        vector<bool> receiverBits2 = checkHamming(receiverBits, charCount, receiverBits2);
+        string recMsg = BitsToStringDecode(receiverBits2);
         char messageType = recMsg[0];
         int rec = (int)recMsg[1] - '0';
 
@@ -290,12 +290,12 @@ vector<bool> Node::setHamming(string payload)
     //General functions
     StringToBits(payload, payloadBits);
 
-    EV << "Payload to be sent (without hamming): ";
-    for (int i = 0; i < payloadBits.size(); i++)
-    {
-        EV << payloadBits[i] << " ";
-    }
-    EV << endl;
+    // EV << "Payload to be sent (without hamming): ";
+    // for (int i = 0; i < payloadBits.size(); i++)
+    // {
+    //     EV << payloadBits[i] << " ";
+    // }
+    // EV << endl;
 
     int j = 0;
     for (int i = 1; i < m * 8 + r; i++)
@@ -323,13 +323,13 @@ vector<bool> Node::setHamming(string payload)
         }
     }
 
-    EV << endl
-       << "Payload after hamming: ";
-    for (int i = 0; i < ham.size(); i++)
-    {
-        EV << ham[i] << " ";
-    }
-    EV << endl;
+    // EV << endl
+    //    << "Payload after hamming: ";
+    // for (int i = 0; i < ham.size(); i++)
+    // {
+    //     EV << ham[i] << " ";
+    // }
+    // EV << endl;
     return ham;
 }
 
@@ -343,11 +343,11 @@ string Node::setMessagePayload(vector<bool> &payloadBits, int charCount, int &pa
     char c = (char)charCount;
     string msgPayload = "";
     msgPayload += c;
-    EV << "Message sent in bits : ";
+    //EV << "Message sent in bits : ";
     //General functions
     char character = 0;
     int j = 0;
-    EV << "Message sent in bits : ";
+    //EV << "Message sent in bits : ";
     for (int i = 0; i < payloadBits.size(); i++)
     {
         if (j == 8)
@@ -368,11 +368,11 @@ string Node::setMessagePayload(vector<bool> &payloadBits, int charCount, int &pa
         msgPayload += character;
     }
 
-    for (int i = 0; i < payloadBits.size(); i++)
-    {
-        EV << payloadBits[i];
-    }
-    EV << "done, string is : " << msgPayload << endl;
+    // for (int i = 0; i < payloadBits.size(); i++)
+    // {
+    //     EV << payloadBits[i];
+    // }
+    // EV << "done, string is : " << msgPayload << endl;
     return msgPayload;
 }
 

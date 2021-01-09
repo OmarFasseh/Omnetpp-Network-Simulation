@@ -54,7 +54,7 @@ void StringToBits(string payload, vector<bool> &payloadBits)
 
 vector<bool> removePadding(string payload, int payloadSize, int &charCount, int paddingSize)
 {
-    EV << "STR ReC : " << payload << endl;
+    // EV << "STR ReC : " << payload << endl;
     charCount = (int)(payload[0]);
     int m = payloadSize - 1;
     vector<bool> payloadBits(m * 8, false);
@@ -72,8 +72,8 @@ vector<bool> removePadding(string payload, int payloadSize, int &charCount, int 
         }
     }
 
-    for (int i = 0; i < payloadBits.size(); i++)
-        EV << " " << payloadBits[i];
+    //for (int i = 0; i < payloadBits.size(); i++)
+    //    EV << " " << payloadBits[i];
     int payloadSize1 = m * 8 - paddingSize;
     vector<bool> messageWithHamming(payloadSize1);
 
@@ -92,13 +92,13 @@ vector<bool> checkHamming(vector<bool> &ham, int charCount)
         r++;
     }
 
-    EV << endl
-       << "Message received with hamming: ";
-    for (int i = 0; i < ham.size(); i++)
-    {
-        EV << ham[i] << " ";
-    }
-    EV << endl;
+    // EV << endl
+    //    << "Message received with hamming: ";
+    // for (int i = 0; i < ham.size(); i++)
+    // {
+    //     EV << ham[i] << " ";
+    // }
+    // EV << endl;
 
     int j = 0;
     vector<bool> errorBits(r, 0);
@@ -128,21 +128,21 @@ vector<bool> checkHamming(vector<bool> &ham, int charCount)
         errorPos = errorPos << 1;
         errorPos |= errorBits[i];
     }
-    if (errorPos != 0)
-    {
-        EV << "Error at " << errorPos - 1 << endl;
-        ham[errorPos - 1] = !ham[errorPos - 1];
-        EV << "Message after correction : " << endl;
-        for (int i = 0; i < ham.size(); i++)
-        {
-            EV << ham[i] << " ";
-        }
-        EV << endl;
-    }
-    else
-    {
-        EV << "No error found." << endl;
-    }
+    // if (errorPos != 0)
+    // {
+    // EV << "Error at " << errorPos - 1 << endl;
+    // ham[errorPos - 1] = !ham[errorPos - 1];
+    // EV << "Message after correction : " << endl;
+    // for (int i = 0; i < ham.size(); i++)
+    // {
+    //     EV << ham[i] << " ";
+    // }
+    // EV << endl;
+    // }
+    // else
+    // {
+    // EV << "No error found." << endl;
+    // }
     j = 0;
     vector<bool> payloadBits(charCount * 8, false);
     for (int i = 1; i < charCount * 8 + r; i++)
