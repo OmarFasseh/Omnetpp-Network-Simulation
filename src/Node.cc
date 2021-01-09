@@ -25,7 +25,7 @@ void Node::initialize()
     receiverR = 0;
     senderWindowSize = 3;
     sequenceNumber = 0;
-    timers = vector<MyMessage *>(senderWindowSize, nullptr);
+    timers = vector<MyMessage *>(senderWindowSize+2, nullptr);
     //read file n
     std::string file_name = "../txtFiles/" + std::to_string(n) + ".txt";
     my_file.open(file_name, std::ios::in);
@@ -217,14 +217,13 @@ void Node::handleMessage(cMessage *msg)
         char messageType = recMsg[0];
         int rec = (int)recMsg[1] - '0';
 
-        int i = 0;
         while (rec != sequenceNumber)
         {
-            if (timers[(sequenceNumber + i) % (senderWindowSize + 1)])
+            if (timers[(sequenceNumber ) % (senderWindowSize + 1)])
             {
-                cancelAndDelete(timers[(sequenceNumber + i) % (senderWindowSize + 1)]);
+                cancelAndDelete(timers[(sequenceNumber ) % (senderWindowSize + 1)]);
             }
-            timers[(sequenceNumber + i) % (senderWindowSize + 1)] = nullptr;
+            timers[(sequenceNumber) % (senderWindowSize + 1)] = nullptr;
 
             sequenceNumber = (sequenceNumber + 1) % (senderWindowSize + 1);
 
@@ -232,7 +231,7 @@ void Node::handleMessage(cMessage *msg)
             {
                 senderData.pop();
             }
-            i++;
+
         }
         if (messageType == '0' && mmsg->getM_Type() == 99)
         {

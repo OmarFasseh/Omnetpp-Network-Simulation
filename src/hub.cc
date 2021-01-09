@@ -84,13 +84,14 @@ void Hub::handleMessage(cMessage *msg)
     if (mmsg->getM_Type() == 99)
     {
         string recMsg = unHam(mmsg->getM_Payload(), mmsg->getPayloadSize(), mmsg->getPaddingSize());
-        if (recMsg[0] == '0')
-        {
-            recMsg = recMsg.substr(3, recMsg.size() - 2);
-            bubble(recMsg.c_str());
-        }
-        else
-            bubble(to_string(recMsg[0]).c_str());
+        bubble(recMsg.c_str());
+        //if (recMsg[0] == '0')
+       // {
+       //     recMsg = recMsg.substr(3, recMsg.size() - 2);
+     //       bubble(recMsg.c_str());
+   //     }
+ //       else
+//            bubble(to_string(recMsg[0]).c_str());
     }
     send(msg, "outs", mmsg->getReciver());
 }
