@@ -212,7 +212,7 @@ void Node::handleMessage(cMessage *msg)
         int charCount;
         //General functions
         vector<bool> receiverBits = removePadding(mmsg->getM_Payload(), mmsg->getPayloadSize(), charCount, mmsg->getPaddingSize());
-        vector<bool> receiverBits2 = checkHamming(receiverBits, charCount, receiverBits2);
+        vector<bool> receiverBits2 = checkHamming(receiverBits, charCount);
         string recMsg = BitsToStringDecode(receiverBits2);
         char messageType = recMsg[0];
         int rec = (int)recMsg[1] - '0';
