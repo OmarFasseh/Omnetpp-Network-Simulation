@@ -25,6 +25,9 @@ simple Node
         int modPercent = default(30);
         int chanPercent=default(50);
         double simDelay =default(0.01);
+        bool loss=default(true);
+        bool dup=default(true);
+        bool del=default(true);
     gates:
         input in;
         output out;

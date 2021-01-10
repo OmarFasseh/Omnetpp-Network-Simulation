@@ -28,7 +28,7 @@ packet MyMessage {
     int M_Type;
     string M_Payload;
     int sender;
-    int reciver;
+    int receiver;
     int paddingSize;
     int payloadSize;
 }

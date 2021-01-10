@@ -45,16 +45,17 @@ protected:
   int receiverR;
   int sequenceNumber;
   vector<MyMessage *> timers;
-  void mSend(int ack, int windowSkip);
+  void mSend(int notControl, int windowSkip);
   void errorAndSendWithDelay(MyMessage *msg, string s, double delay);
   virtual void initialize();
   virtual void handleMessage(cMessage *msg);
 
 public:
-  int reciver;
+  int receiver;
   int droppedFrames = 0;   //due to error
   int generatedFrames = 0; //everything including dup
   int retransmittedFrames = 0;
+  int usefulData = 0;
   vector<bool> setHamming(string payload);
   string setMessagePayload(vector<bool> &payloadBits, int charCount, int &paddingSize);
   string decodeHamming(vector<bool> &msg);

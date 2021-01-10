@@ -42,8 +42,8 @@ void Hub::initialize()
         pair2 = pool[rand];
         pool.erase(pool.begin() + rand);
         //((Hub *)getParentModule()->getSubmodule("hub"))->test();
-        ((Node *)getParentModule()->getSubmodule("nodes", pair1))->reciver = pair2;
-        ((Node *)getParentModule()->getSubmodule("nodes", pair2))->reciver = pair1;
+        ((Node *)getParentModule()->getSubmodule("nodes", pair1))->receiver = pair2;
+        ((Node *)getParentModule()->getSubmodule("nodes", pair2))->receiver = pair1;
         EV << pair1 << pair2 << " ";
         pairs.push_back(std::make_pair(pair1, pair2));
 
@@ -65,19 +65,27 @@ void Hub::handleMessage(cMessage *msg)
         int n = par("n").intValue();
         std::fstream f;
         f.open("../txtFiles/outputStats.txt", fstream::out);
+        int totalDF = 0, totalGF = 0, totalRF = 0, totalUseful = 0;
         for (int i = 0; i < n; i++)
         {
+            Node *n = ((Node *)getParentModule()->getSubmodule("nodes", i));
+            totalDF += n->droppedFrames;
+            totalGF += n->generatedFrames;
+            totalRF += n->retransmittedFrames;
+            totalUseful += n->usefulData;
             f << "Node " << i << "\n";
-            f << "Dropped frames= " << ((Node *)getParentModule()->getSubmodule("nodes", i))->droppedFrames << "\n";
-            f << "Generated frames= " << ((Node *)getParentModule()->getSubmodule("nodes", i))->generatedFrames << "\n";
-            f << "Retransmitted frames= " << ((Node *)getParentModule()->getSubmodule("nodes", i))->retransmittedFrames << "\n";
+            f << "Dropped frames = " << n->droppedFrames << "\n";
+            f << "Generated frames = " << n->generatedFrames << "\n";
+            f << "Retransmitted frames = " << n->retransmittedFrames << "\n";
+            f << "Useful data = " << n->usefulData << "\n";
             f << "------------------------\n";
         }
         f << "Stats: \n";
-        //f << "Total Dropped frames= " << ((Node *)getParentModule()->getSubmodule("nodes", 0))->totalDF << "\n";
-        //f << "Total Generated frames= " << ((Node *)getParentModule()->getSubmodule("nodes", 0))->totalGF << "\n";
-        //f << "Total Retransmitted frames= " << ((Node *)getParentModule()->getSubmodule("nodes", 0))->totalRF << "\n";
-
+        f << "Total Dropped frames = " << totalDF << "\n";
+        f << "Total Generated frames = " << totalGF << "\n";
+        f << "Total Retransmitted frames = " << totalRF << "\n";
+        f << "Total useful data = " << totalUseful << "\n";
+        f << "Total Useful/Transmitted = " << ((double)totalUseful) / totalGF * 100.0 << "%\n";
         return;
     }
 
@@ -85,13 +93,13 @@ void Hub::handleMessage(cMessage *msg)
     {
         string recMsg = unHam(mmsg->getM_Payload(), mmsg->getPayloadSize(), mmsg->getPaddingSize());
         bubble(recMsg.c_str());
-        //if (recMsg[0] == '0')
-       // {
-       //     recMsg = recMsg.substr(3, recMsg.size() - 2);
-     //       bubble(recMsg.c_str());
-   //     }
- //       else
-//            bubble(to_string(recMsg[0]).c_str());
+        if (recMsg[0] == '0')
+        {
+            recMsg = recMsg.substr(2, recMsg.size() - 3);
+            bubble(recMsg.c_str());
+        }
+        else
+            bubble(to_string(recMsg[0]).c_str());
     }
-    send(msg, "outs", mmsg->getReciver());
+    send(msg, "outs", mmsg->getReceiver());
 }

@@ -184,7 +184,7 @@ MyMessage::MyMessage(const char *name, short kind) : ::omnetpp::cPacket(name,kin
     this->Seq_Num = 0;
     this->M_Type = 0;
     this->sender = 0;
-    this->reciver = 0;
+    this->receiver = 0;
     this->paddingSize = 0;
     this->payloadSize = 0;
 }
@@ -212,7 +212,7 @@ void MyMessage::copy(const MyMessage& other)
     this->M_Type = other.M_Type;
     this->M_Payload = other.M_Payload;
     this->sender = other.sender;
-    this->reciver = other.reciver;
+    this->receiver = other.receiver;
     this->paddingSize = other.paddingSize;
     this->payloadSize = other.payloadSize;
 }
@@ -224,7 +224,7 @@ void MyMessage::parsimPack(omnetpp::cCommBuffer *b) const
     doParsimPacking(b,this->M_Type);
     doParsimPacking(b,this->M_Payload);
     doParsimPacking(b,this->sender);
-    doParsimPacking(b,this->reciver);
+    doParsimPacking(b,this->receiver);
     doParsimPacking(b,this->paddingSize);
     doParsimPacking(b,this->payloadSize);
 }
@@ -236,7 +236,7 @@ void MyMessage::parsimUnpack(omnetpp::cCommBuffer *b)
     doParsimUnpacking(b,this->M_Type);
     doParsimUnpacking(b,this->M_Payload);
     doParsimUnpacking(b,this->sender);
-    doParsimUnpacking(b,this->reciver);
+    doParsimUnpacking(b,this->receiver);
     doParsimUnpacking(b,this->paddingSize);
     doParsimUnpacking(b,this->payloadSize);
 }
@@ -281,14 +281,14 @@ void MyMessage::setSender(int sender)
     this->sender = sender;
 }
 
-int MyMessage::getReciver() const
+int MyMessage::getReceiver() const
 {
-    return this->reciver;
+    return this->receiver;
 }
 
-void MyMessage::setReciver(int reciver)
+void MyMessage::setReceiver(int receiver)
 {
-    this->reciver = reciver;
+    this->receiver = receiver;
 }
 
 int MyMessage::getPaddingSize() const
@@ -412,7 +412,7 @@ const char *MyMessageDescriptor::getFieldName(int field) const
         "M_Type",
         "M_Payload",
         "sender",
-        "reciver",
+        "receiver",
         "paddingSize",
         "payloadSize",
     };
@@ -427,7 +427,7 @@ int MyMessageDescriptor::findField(const char *fieldName) const
     if (fieldName[0]=='M' && strcmp(fieldName, "M_Type")==0) return base+1;
     if (fieldName[0]=='M' && strcmp(fieldName, "M_Payload")==0) return base+2;
     if (fieldName[0]=='s' && strcmp(fieldName, "sender")==0) return base+3;
-    if (fieldName[0]=='r' && strcmp(fieldName, "reciver")==0) return base+4;
+    if (fieldName[0]=='r' && strcmp(fieldName, "receiver")==0) return base+4;
     if (fieldName[0]=='p' && strcmp(fieldName, "paddingSize")==0) return base+5;
     if (fieldName[0]=='p' && strcmp(fieldName, "payloadSize")==0) return base+6;
     return basedesc ? basedesc->findField(fieldName) : -1;
@@ -521,7 +521,7 @@ std::string MyMessageDescriptor::getFieldValueAsString(void *object, int field, 
         case 1: return long2string(pp->getM_Type());
         case 2: return oppstring2string(pp->getM_Payload());
         case 3: return long2string(pp->getSender());
-        case 4: return long2string(pp->getReciver());
+        case 4: return long2string(pp->getReceiver());
         case 5: return long2string(pp->getPaddingSize());
         case 6: return long2string(pp->getPayloadSize());
         default: return "";
@@ -542,7 +542,7 @@ bool MyMessageDescriptor::setFieldValueAsString(void *object, int field, int i, 
         case 1: pp->setM_Type(string2long(value)); return true;
         case 2: pp->setM_Payload((value)); return true;
         case 3: pp->setSender(string2long(value)); return true;
-        case 4: pp->setReciver(string2long(value)); return true;
+        case 4: pp->setReceiver(string2long(value)); return true;
         case 5: pp->setPaddingSize(string2long(value)); return true;
         case 6: pp->setPayloadSize(string2long(value)); return true;
         default: return false;

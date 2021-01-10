@@ -33,7 +33,7 @@ typedef  std::bitset<8> bits;
  *     int M_Type;
  *     string M_Payload;
  *     int sender;
- *     int reciver;
+ *     int receiver;
  *     int paddingSize;
  *     int payloadSize;
  * }
@@ -46,7 +46,7 @@ class MyMessage : public ::omnetpp::cPacket
     int M_Type;
     ::omnetpp::opp_string M_Payload;
     int sender;
-    int reciver;
+    int receiver;
     int paddingSize;
     int payloadSize;
 
@@ -75,8 +75,8 @@ class MyMessage : public ::omnetpp::cPacket
     virtual void setM_Payload(const char * M_Payload);
     virtual int getSender() const;
     virtual void setSender(int sender);
-    virtual int getReciver() const;
-    virtual void setReciver(int reciver);
+    virtual int getReceiver() const;
+    virtual void setReceiver(int receiver);
     virtual int getPaddingSize() const;
     virtual void setPaddingSize(int paddingSize);
     virtual int getPayloadSize() const;

@@ -25,7 +25,7 @@ void Node::initialize()
     receiverR = 0;
     senderWindowSize = 3;
     sequenceNumber = 0;
-    timers = vector<MyMessage *>(senderWindowSize+2, nullptr);
+    timers = vector<MyMessage *>(senderWindowSize + 2, nullptr);
     //read file n
     std::string file_name = "../txtFiles/" + std::to_string(n) + ".txt";
     my_file.open(file_name, std::ios::in);
@@ -35,7 +35,7 @@ void Node::initialize()
         finished = false;
 }
 
-void Node::mSend(int ack, int windowSkip)
+void Node::mSend(int notControl, int windowSkip)
 {
 
     //If window slided and we dont have the window full of data, read data if possible.
@@ -51,6 +51,7 @@ void Node::mSend(int ack, int windowSkip)
             finished = true;
             break;
         }
+        usefulData++;
         senderData.push(s);
     }
 
@@ -80,7 +81,7 @@ void Node::mSend(int ack, int windowSkip)
         //     msg->setM_Type(98); //finished
         // else
         msg->setM_Type(99); //not finished
-        msg->setReciver(reciver);
+        msg->setReceiver(receiver);
         msg->setSender(n);
         msg->setPayloadSize(msgToSend.size());
         MyMessage *timer = new MyMessage("timer");
@@ -99,7 +100,7 @@ void Node::mSend(int ack, int windowSkip)
     }
 
     //Sending ack only
-    if (senderData.size() == windowSkip && ack)
+    if (senderData.size() == windowSkip && notControl)
     {
         string messageType = "1"; //1 Means message has no data (only ack)
         string tmp = messageType;
@@ -122,7 +123,7 @@ void Node::mSend(int ack, int windowSkip)
             msg->setM_Type(99); //not finished
         }
         msg->setPaddingSize(paddingSize);
-        msg->setReciver(reciver);
+        msg->setReceiver(receiver);
         msg->setSender(n);
         msg->setPayloadSize(msgToSend.size());
         errorAndSendWithDelay(msg, msgToSend, 0);
@@ -140,7 +141,8 @@ void Node::errorAndSendWithDelay(MyMessage *msg, string s, double delay)
     if (modE < par("modPercent").intValue()) //ini
     {
         int rand2 = uniform(0, 1) * (s.size());
-        if(rand2==0) rand2++;
+        if (rand2 == 0)
+            rand2++;
         int errorBit = uniform(0, 1) * 8; //ini
         bitset<8> bs(s.c_str()[rand2]);
         bs[errorBit] = !bs[errorBit];
@@ -153,13 +155,13 @@ void Node::errorAndSendWithDelay(MyMessage *msg, string s, double delay)
     if (errored < par("chanPercent").intValue())
     { //ini
         int rand = uniform(0, 1) * 3;
-        if (rand == 0)
+        if (rand == 0 && par("del").boolValue())
         {
             //send delayed
             sendDelayed(msg, simDelay * 5 + delay, "out");
             generatedFrames++;
         }
-        else if (rand == 1)
+        else if (rand == 1&& par("dup").boolValue())
         {
             //send dup
             MyMessage *copyMsg = msg->dup();
@@ -167,10 +169,16 @@ void Node::errorAndSendWithDelay(MyMessage *msg, string s, double delay)
             sendDelayed(msg, simDelay + simDelay / 10 + delay, "out");
             generatedFrames += 2;
         }
-        else if (rand == 2)
+        else if (rand == 2&& par("loss").boolValue())
         {
             //lost msg
+            EV << "Lost message";
             droppedFrames++;
+        }
+        else
+        {
+            sendDelayed(msg, simDelay + delay, "out");
+            generatedFrames++;
         }
     }
     else
@@ -192,28 +200,25 @@ void Node::handleMessage(cMessage *msg)
     { //Host wants to send
         delete msg;
         stringstream ss;
-        ss << reciver;
+        ss << receiver;
         mSend(0, 0);
-        if (finished && first)
+        if (finished && first) //didn't find a file must retransmit control msg
         {
             first = false;
             MyMessage *mmsg = new MyMessage("control message");
             mmsg->setM_Type(20); // 20 hub control
-            mmsg->setReciver(reciver);
+            mmsg->setReceiver(receiver);
             mmsg->setM_Payload("Control");
             send(mmsg, "out");
             return;
         }
-        //   double interval = exponential(1 / par("lambda").doubleValue());
-        //  EV << ". Scheduled a new packet after " << interval << "s";
-        //   scheduleAt(simTime() + 0.1, new cMessage(""));
     }
     else if (mmsg->getM_Type() == 99 || mmsg->getM_Type() == 98)
     {
 
         int charCount;
         //General functions
-        //string test = "ô";
+        //string test = "ï¿½";
         vector<bool> receiverBits = removePadding(mmsg->getM_Payload(), mmsg->getPayloadSize(), charCount, mmsg->getPaddingSize());
         vector<bool> receiverBits2 = checkHamming(receiverBits, charCount);
         string recMsg = BitsToStringDecode(receiverBits2);
@@ -222,9 +227,9 @@ void Node::handleMessage(cMessage *msg)
 
         while (rec != sequenceNumber)
         {
-            if (timers[(sequenceNumber ) % (senderWindowSize + 1)])
+            if (timers[(sequenceNumber) % (senderWindowSize + 1)])
             {
-                cancelAndDelete(timers[(sequenceNumber ) % (senderWindowSize + 1)]);
+                cancelAndDelete(timers[(sequenceNumber) % (senderWindowSize + 1)]);
             }
             timers[(sequenceNumber) % (senderWindowSize + 1)] = nullptr;
 
@@ -234,7 +239,6 @@ void Node::handleMessage(cMessage *msg)
             {
                 senderData.pop();
             }
-
         }
         if (messageType == '0' && mmsg->getM_Type() == 99)
         {
@@ -258,7 +262,7 @@ void Node::handleMessage(cMessage *msg)
         //MyMessage *mmsg = check_and_cast<MyMessage *>(msg);
         // bubble(mmsg->getM_Payload());
         // std::stringstream ss;
-        // ss << reciver;
+        // ss << receiver;
         // MyMessage *mmsg = new MyMessage(ss.str().c_str());
         // mSend(mmsg, 0);
     }

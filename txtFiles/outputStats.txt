@@ -1,0 +1,54 @@
+Node 0
+Dropped frames = 0
+Generated frames = 8
+Retransmitted frames = 0
+Useful data = 4
+------------------------
+Node 1
+Dropped frames = 0
+Generated frames = 10
+Retransmitted frames = 0
+Useful data = 4
+------------------------
+Node 2
+Dropped frames = 0
+Generated frames = 11
+Retransmitted frames = 0
+Useful data = 4
+------------------------
+Node 3
+Dropped frames = 0
+Generated frames = 10
+Retransmitted frames = 0
+Useful data = 4
+------------------------
+Node 4
+Dropped frames = 0
+Generated frames = 12
+Retransmitted frames = 0
+Useful data = 2
+------------------------
+Node 5
+Dropped frames = 0
+Generated frames = 10
+Retransmitted frames = 0
+Useful data = 2
+------------------------
+Node 6
+Dropped frames = 0
+Generated frames = 12
+Retransmitted frames = 0
+Useful data = 4
+------------------------
+Node 7
+Dropped frames = 0
+Generated frames = 15
+Retransmitted frames = 0
+Useful data = 4
+------------------------
+Stats: 
+Total Dropped frames = 0
+Total Generated frames = 88
+Total Retransmitted frames = 0
+Total useful data = 28
+Total Useful/Transmitted = 31.8182%
