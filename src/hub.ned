@@ -15,9 +15,6 @@
 
 package mesh;
 
-//
-// TODO auto-generated module
-//
 simple Hub
 {
     parameters:

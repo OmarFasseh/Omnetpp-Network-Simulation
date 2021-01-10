@@ -77,10 +77,7 @@ void Node::mSend(int notControl, int windowSkip)
         MyMessage *msg = new MyMessage("message");
         msg->setM_Payload(msgToSend.c_str());
         msg->setPaddingSize(paddingSize);
-        // if (finished)
-        //     msg->setM_Type(98); //finished
-        // else
-        msg->setM_Type(99); //not finished
+        msg->setM_Type(99);
         msg->setReceiver(receiver);
         msg->setSender(n);
         msg->setPayloadSize(msgToSend.size());
@@ -89,14 +86,6 @@ void Node::mSend(int notControl, int windowSkip)
         timer->setM_Type(50);
         scheduleAt(simTime() + 0.1 * (i + 1), timer);
         errorAndSendWithDelay(msg, msgToSend, i);
-        /*
-        const char *test1 = msgToSend.c_str();
-        const char *test2 = msg->getM_Payload();
-        int charCount;
-        vector<bool> receiverBits = removePadding(msg->getM_Payload(), msg->getPayloadSize(), charCount, msg->getPaddingSize());
-        receiverBits = checkHamming(receiverBits, charCount);
-        string recMsg = BitsToStringDecode(receiverBits);
-        test2 = recMsg.c_str();*/
     }
 
     //Sending ack only
@@ -127,7 +116,6 @@ void Node::mSend(int notControl, int windowSkip)
         msg->setSender(n);
         msg->setPayloadSize(msgToSend.size());
         errorAndSendWithDelay(msg, msgToSend, 0);
-        //Send with/without error
     }
 }
 void Node::errorAndSendWithDelay(MyMessage *msg, string s, double delay)
@@ -161,7 +149,7 @@ void Node::errorAndSendWithDelay(MyMessage *msg, string s, double delay)
             sendDelayed(msg, simDelay * 5 + delay, "out");
             generatedFrames++;
         }
-        else if (rand == 1&& par("dup").boolValue())
+        else if (rand == 1 && par("dup").boolValue())
         {
             //send dup
             MyMessage *copyMsg = msg->dup();
@@ -169,7 +157,7 @@ void Node::errorAndSendWithDelay(MyMessage *msg, string s, double delay)
             sendDelayed(msg, simDelay + simDelay / 10 + delay, "out");
             generatedFrames += 2;
         }
-        else if (rand == 2&& par("loss").boolValue())
+        else if (rand == 2 && par("loss").boolValue())
         {
             //lost msg
             EV << "Lost message";
@@ -218,7 +206,6 @@ void Node::handleMessage(cMessage *msg)
 
         int charCount;
         //General functions
-        //string test = "�";
         vector<bool> receiverBits = removePadding(mmsg->getM_Payload(), mmsg->getPayloadSize(), charCount, mmsg->getPaddingSize());
         vector<bool> receiverBits2 = checkHamming(receiverBits, charCount);
         string recMsg = BitsToStringDecode(receiverBits2);
@@ -258,13 +245,6 @@ void Node::handleMessage(cMessage *msg)
         }
         int windowSkip = senderData.size();
         mSend(1, windowSkip);
-        //delete mmsg;
-        //MyMessage *mmsg = check_and_cast<MyMessage *>(msg);
-        // bubble(mmsg->getM_Payload());
-        // std::stringstream ss;
-        // ss << receiver;
-        // MyMessage *mmsg = new MyMessage(ss.str().c_str());
-        // mSend(mmsg, 0);
     }
     else if (mmsg->getM_Type() == 50)
     {

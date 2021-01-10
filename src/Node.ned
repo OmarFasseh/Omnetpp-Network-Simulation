@@ -16,7 +16,7 @@
 package mesh;
 
 //
-// TODO auto-generated module
+//  auto-generated module
 //
 simple Node
 {

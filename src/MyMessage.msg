@@ -13,9 +13,6 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-//
-// TODO generated message class
-//
 cplusplus {{
 #include <bitset>
 typedef  std::bitset<8> bits;
