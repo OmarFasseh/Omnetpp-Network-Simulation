@@ -139,7 +139,8 @@ void Node::errorAndSendWithDelay(MyMessage *msg, string s, double delay)
     int modE = uniform(0, 1) * 100;
     if (modE < par("modPercent").intValue()) //ini
     {
-        int rand2 = uniform(0, 1) * s.size();
+        int rand2 = uniform(0, 1) * (s.size());
+        if(rand2==0) rand2++;
         int errorBit = uniform(0, 1) * 8; //ini
         bitset<8> bs(s.c_str()[rand2]);
         bs[errorBit] = !bs[errorBit];
@@ -209,8 +210,10 @@ void Node::handleMessage(cMessage *msg)
     }
     else if (mmsg->getM_Type() == 99 || mmsg->getM_Type() == 98)
     {
+
         int charCount;
         //General functions
+        //string test = "ô";
         vector<bool> receiverBits = removePadding(mmsg->getM_Payload(), mmsg->getPayloadSize(), charCount, mmsg->getPaddingSize());
         vector<bool> receiverBits2 = checkHamming(receiverBits, charCount);
         string recMsg = BitsToStringDecode(receiverBits2);

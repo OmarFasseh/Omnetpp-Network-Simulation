@@ -128,15 +128,15 @@ vector<bool> checkHamming(vector<bool> &ham, int charCount)
         errorPos = errorPos << 1;
         errorPos |= errorBits[i];
     }
-    // if (errorPos != 0)
-    // {
+     if (errorPos != 0)
+     {
     // EV << "Error at " << errorPos - 1 << endl;
-    // ham[errorPos - 1] = !ham[errorPos - 1];
+     ham[errorPos - 1] = !ham[errorPos - 1];
     // EV << "Message after correction : " << endl;
     // for (int i = 0; i < ham.size(); i++)
     // {
     //     EV << ham[i] << " ";
-    // }
+     }
     // EV << endl;
     // }
     // else
