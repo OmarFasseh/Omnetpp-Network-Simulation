@@ -102,7 +102,7 @@ vector<bool> checkHamming(vector<bool> &ham, int charCount)
 
     int j = 0;
     vector<bool> errorBits(r, 0);
-    int errorPos = 0;
+    unsigned int errorPos = 0;
 
     for (int i = 0; i < r; i++)
     {
@@ -128,7 +128,7 @@ vector<bool> checkHamming(vector<bool> &ham, int charCount)
         errorPos = errorPos << 1;
         errorPos |= errorBits[i];
     }
-     if (errorPos != 0)
+     if (errorPos > 0 && errorPos<ham.size())
      {
     // EV << "Error at " << errorPos - 1 << endl;
      ham[errorPos - 1] = !ham[errorPos - 1];
@@ -162,10 +162,10 @@ vector<bool> checkHamming(vector<bool> &ham, int charCount)
     */
     return payloadBits;
 }
-string unHam(const char *payload, int payloadSize, int paddingSize)
+string unHam(const char *payload, int payloadSize, int paddingSize,int charCount)
 {
-    int charCount;
-    vector<bool> ham = removePadding(payload, payloadSize, charCount, paddingSize);
+    int c;
+    vector<bool> ham = removePadding(payload, payloadSize, c, paddingSize);
     //vector<bool> payloadBits = checkHamming(ham, charCount);
     int r = 0;
     charCount--;

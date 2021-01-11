@@ -27,7 +27,7 @@ void Node::initialize()
     sequenceNumber = 0;
     timers = vector<MyMessage *>(senderWindowSize + 2, nullptr);
     //read file n
-    std::string file_name = "../txtFiles/" + std::to_string(n) + ".txt";
+    std::string file_name = "../txtFiles/node" + std::to_string(n + 1) + ".txt";
     my_file.open(file_name, std::ios::in);
     if (!my_file)
         finished = true;
@@ -75,6 +75,7 @@ void Node::mSend(int notControl, int windowSkip)
         int paddingSize = 0;
         string msgToSend = setMessagePayload(messageWithHaming, tmp.size() + 1, paddingSize);
         MyMessage *msg = new MyMessage("message");
+        msg->setCharCount(tmp.size() + 1);
         msg->setM_Payload(msgToSend.c_str());
         msg->setPaddingSize(paddingSize);
         msg->setM_Type(99);
@@ -84,6 +85,15 @@ void Node::mSend(int notControl, int windowSkip)
         MyMessage *timer = new MyMessage("timer");
         timers[(sequenceNumber + i) % (senderWindowSize + 1)] = timer;
         timer->setM_Type(50);
+        //
+        int charCount;
+        vector<bool> receiverBits = removePadding(msg->getM_Payload(), msg->getPayloadSize(), charCount, msg->getPaddingSize());
+        vector<bool> receiverBits2 = checkHamming(receiverBits, charCount);
+        string recMsg = BitsToStringDecode(receiverBits2);
+        int test = (int)recMsg[1] - '0';
+        if (test < 0 || test > senderWindowSize)
+            cout << "ouch";
+        //
         scheduleAt(simTime() + 0.1 * (i + 1), timer);
         errorAndSendWithDelay(msg, msgToSend, i);
     }
@@ -94,7 +104,6 @@ void Node::mSend(int notControl, int windowSkip)
         string messageType = "1"; //1 Means message has no data (only ack)
         string tmp = messageType;
         tmp += (char)(receiverR + '0'); //Ack for receiver to slide the receriver's sending window
-
         //Hamming and framing
         vector<bool> messageWithHaming = setHamming(tmp);
         int paddingSize = 0;
@@ -111,10 +120,26 @@ void Node::mSend(int notControl, int windowSkip)
             msg = new MyMessage("ack");
             msg->setM_Type(99); //not finished
         }
+        msg->setCharCount(tmp.size() + 1);
         msg->setPaddingSize(paddingSize);
         msg->setReceiver(receiver);
         msg->setSender(n);
         msg->setPayloadSize(msgToSend.size());
+
+        //
+        int charCount;
+        vector<bool> receiverBits = removePadding(msg->getM_Payload(), msg->getPayloadSize(), charCount, msg->getPaddingSize());
+        vector<bool> receiverBits2 = checkHamming(receiverBits, charCount);
+        string recMsg = BitsToStringDecode(receiverBits2);
+        int test = (int)recMsg[1] - '0';
+        if (test < 0 || test > senderWindowSize)
+        {
+            cout << "ouch";
+            vector<bool> receiverBits = removePadding(msg->getM_Payload(), msg->getPayloadSize(), charCount, msg->getPaddingSize());
+            vector<bool> receiverBits2 = checkHamming(receiverBits, charCount);
+            string recMsg = BitsToStringDecode(receiverBits2);
+        }
+        //
         errorAndSendWithDelay(msg, msgToSend, 0);
     }
 }
@@ -211,7 +236,8 @@ void Node::handleMessage(cMessage *msg)
         string recMsg = BitsToStringDecode(receiverBits2);
         char messageType = recMsg[0];
         int rec = (int)recMsg[1] - '0';
-
+        if (rec < 0 || rec > senderWindowSize)
+            return;
         while (rec != sequenceNumber)
         {
             if (timers[(sequenceNumber) % (senderWindowSize + 1)])
@@ -325,7 +351,6 @@ string Node::setMessagePayload(vector<bool> &payloadBits, int charCount, int &pa
     paddingSize = stringBitsSize - payloadBits.size();
     for (int i = 0; i < paddingSize; i++)
         payloadBits.insert(payloadBits.begin(), 1);
-
     char c = (char)charCount;
     string msgPayload = "";
     msgPayload += c;

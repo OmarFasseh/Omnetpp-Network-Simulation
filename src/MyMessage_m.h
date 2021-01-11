@@ -24,7 +24,7 @@ typedef  std::bitset<8> bits;
 // }}
 
 /**
- * Class generated from <tt>MyMessage.msg:25</tt> by nedtool.
+ * Class generated from <tt>MyMessage.msg:22</tt> by nedtool.
  * <pre>
  * packet MyMessage
  * {
@@ -36,6 +36,7 @@ typedef  std::bitset<8> bits;
  *     int receiver;
  *     int paddingSize;
  *     int payloadSize;
+ *     int charCount;
  * }
  * </pre>
  */
@@ -49,6 +50,7 @@ class MyMessage : public ::omnetpp::cPacket
     int receiver;
     int paddingSize;
     int payloadSize;
+    int charCount;
 
   private:
     void copy(const MyMessage& other);
@@ -81,6 +83,8 @@ class MyMessage : public ::omnetpp::cPacket
     virtual void setPaddingSize(int paddingSize);
     virtual int getPayloadSize() const;
     virtual void setPayloadSize(int payloadSize);
+    virtual int getCharCount() const;
+    virtual void setCharCount(int charCount);
 };
 
 inline void doParsimPacking(omnetpp::cCommBuffer *b, const MyMessage& obj) {obj.parsimPack(b);}

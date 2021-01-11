@@ -8,4 +8,4 @@ string BitsToStringDecode(vector<bool> &receiverBits);
 void StringToBits(string payload, vector<bool> &payloadBits);
 vector<bool> removePadding(string payload, int payloadSize, int &charCount, int paddingSize);
 vector<bool> checkHamming(vector<bool> &ham, int charCount);
-string unHam(const char *payload, int payloadSize, int paddingSize);
+string unHam(const char *payload, int payloadSize, int paddingSize,int charCount);

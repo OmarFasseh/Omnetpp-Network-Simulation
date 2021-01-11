@@ -91,7 +91,7 @@ void Hub::handleMessage(cMessage *msg)
 
     if (mmsg->getM_Type() == 99)
     {
-        string recMsg = unHam(mmsg->getM_Payload(), mmsg->getPayloadSize(), mmsg->getPaddingSize());
+        string recMsg = unHam(mmsg->getM_Payload(), mmsg->getPayloadSize(), mmsg->getPaddingSize(),mmsg->getCharCount());
         bubble(recMsg.c_str());
         if (recMsg[0] == '0')
         {

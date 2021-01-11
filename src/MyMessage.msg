@@ -28,6 +28,7 @@ packet MyMessage {
     int receiver;
     int paddingSize;
     int payloadSize;
+    int charCount;
 }
 
 
