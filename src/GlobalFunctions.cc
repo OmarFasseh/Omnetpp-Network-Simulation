@@ -7,7 +7,7 @@
 #include "GlobalFunctions.h"
 using namespace omnetpp;
 #include <bits/stdc++.h> /* reverse*/
-
+std::fstream output;
 string BitsToStringDecode(vector<bool> &receiverBits)
 {
     char character = 0;
@@ -83,8 +83,9 @@ vector<bool> removePadding(string payload, int payloadSize, int &charCount, int 
     }
     return messageWithHamming;
 }
-vector<bool> checkHamming(vector<bool> &ham, int charCount)
+vector<bool> checkHamming(vector<bool> &ham, int charCount,const char * s)
 {
+
     int r = 0;
     charCount--;
     while ((charCount * 8) + r + 1 > pow(2, r))
@@ -131,6 +132,9 @@ vector<bool> checkHamming(vector<bool> &ham, int charCount)
      if (errorPos > 0 && errorPos<ham.size())
      {
     // EV << "Error at " << errorPos - 1 << endl;
+     //output.open("../txtFiles/logs.txt", std::ios_base::app);
+     output.flush();
+         output<<"hamming code corrected error at message "<<s<<"\n";
      ham[errorPos - 1] = !ham[errorPos - 1];
     // EV << "Message after correction : " << endl;
     // for (int i = 0; i < ham.size(); i++)

@@ -19,6 +19,7 @@
 #include <omnetpp.h>
 #include <utility>
 #include <vector>
+#include <fstream>
 using namespace omnetpp;
 
 class Hub : public cSimpleModule
@@ -27,6 +28,7 @@ protected:
   virtual void initialize();
   virtual void handleMessage(cMessage *msg);
   std::vector<std::pair<int, int>> pairs;
+  std::fstream f;
 };
 
 #endif

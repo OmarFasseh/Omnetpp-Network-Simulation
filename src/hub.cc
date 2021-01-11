@@ -27,7 +27,7 @@ void Hub::initialize()
     int pairsDelay = par("pairsDelay").doubleValue();
     std::vector<int> pool(n, 0);
     int pair1, pair2;
-
+    f.open("../txtFiles/logs.txt", std::ios_base::app);
     for (int i = 0; i < n; i++)
     {
         pool[i] = i;
@@ -47,9 +47,12 @@ void Hub::initialize()
         EV << pair1 << pair2 << " ";
         pairs.push_back(std::make_pair(pair1, pair2));
 
+
+
         MyMessage *mmsg = new MyMessage("control_message");
         mmsg->setM_Type(20); // 20 hub control
         sendDelayed(mmsg, i * pairsDelay + simTime(), "outs", pair1);
+
     }
     MyMessage *mmsg = new MyMessage("END");
     mmsg->setM_Type(95); //simulation finished
@@ -63,8 +66,6 @@ void Hub::handleMessage(cMessage *msg)
     if (mmsg->getM_Type() == 95)
     {
         int n = par("n").intValue();
-        std::fstream f;
-        f.open("../txtFiles/outputStats.txt", fstream::out);
         int totalDF = 0, totalGF = 0, totalRF = 0, totalUseful = 0;
         for (int i = 0; i < n; i++)
         {

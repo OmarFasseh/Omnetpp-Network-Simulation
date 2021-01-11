@@ -29,6 +29,7 @@ void Node::initialize()
     //read file n
     std::string file_name = "../txtFiles/node" + std::to_string(n + 1) + ".txt";
     my_file.open(file_name, std::ios::in);
+    output.open("../txtFiles/logs.txt", std::ios_base::app);
     if (!my_file)
         finished = true;
     else
@@ -88,7 +89,7 @@ void Node::mSend(int notControl, int windowSkip)
         //
         int charCount;
         vector<bool> receiverBits = removePadding(msg->getM_Payload(), msg->getPayloadSize(), charCount, msg->getPaddingSize());
-        vector<bool> receiverBits2 = checkHamming(receiverBits, charCount);
+        vector<bool> receiverBits2 = checkHamming(receiverBits, charCount,msg->getM_Payload());
         string recMsg = BitsToStringDecode(receiverBits2);
         int test = (int)recMsg[1] - '0';
         if (test < 0 || test > senderWindowSize)
@@ -129,16 +130,9 @@ void Node::mSend(int notControl, int windowSkip)
         //
         int charCount;
         vector<bool> receiverBits = removePadding(msg->getM_Payload(), msg->getPayloadSize(), charCount, msg->getPaddingSize());
-        vector<bool> receiverBits2 = checkHamming(receiverBits, charCount);
+        vector<bool> receiverBits2 = checkHamming(receiverBits, charCount,msg->getM_Payload());
         string recMsg = BitsToStringDecode(receiverBits2);
-        int test = (int)recMsg[1] - '0';
-        if (test < 0 || test > senderWindowSize)
-        {
-            cout << "ouch";
-            vector<bool> receiverBits = removePadding(msg->getM_Payload(), msg->getPayloadSize(), charCount, msg->getPaddingSize());
-            vector<bool> receiverBits2 = checkHamming(receiverBits, charCount);
-            string recMsg = BitsToStringDecode(receiverBits2);
-        }
+
         //
         errorAndSendWithDelay(msg, msgToSend, 0);
     }
@@ -153,6 +147,10 @@ void Node::errorAndSendWithDelay(MyMessage *msg, string s, double delay)
     int modE = uniform(0, 1) * 100;
     if (modE < par("modPercent").intValue()) //ini
     {
+      //  output.open("../txtFiles/logs.txt", std::ios_base::app);
+        output<<"message before error:"<<unHam(s.c_str(), msg->getPayloadSize(), msg->getPaddingSize(),msg->getCharCount())<<"\n";
+       // output.close();
+        output.flush();
         int rand2 = uniform(0, 1) * (s.size());
         if (rand2 == 0)
             rand2++;
@@ -162,6 +160,10 @@ void Node::errorAndSendWithDelay(MyMessage *msg, string s, double delay)
         unsigned long i = bs.to_ulong();
         unsigned char c = static_cast<unsigned char>(i);
         s[rand2] = c;
+       // output.open("../txtFiles/logs.txt", std::ios_base::app);
+        output<<"message after error:"<<unHam(s.c_str(), msg->getPayloadSize(), msg->getPaddingSize(),msg->getCharCount())<<"\n";
+        output.flush();
+        //    output.close();
     }
     msg->setM_Payload(s.c_str());
     int errored = uniform(0, 1) * 100;
@@ -232,7 +234,7 @@ void Node::handleMessage(cMessage *msg)
         int charCount;
         //General functions
         vector<bool> receiverBits = removePadding(mmsg->getM_Payload(), mmsg->getPayloadSize(), charCount, mmsg->getPaddingSize());
-        vector<bool> receiverBits2 = checkHamming(receiverBits, charCount);
+        vector<bool> receiverBits2 = checkHamming(receiverBits, charCount,mmsg->getM_Payload());
         string recMsg = BitsToStringDecode(receiverBits2);
         char messageType = recMsg[0];
         int rec = (int)recMsg[1] - '0';
@@ -252,12 +254,21 @@ void Node::handleMessage(cMessage *msg)
             {
                 senderData.pop();
             }
+
+        }
+        if(messageType == '1'&& mmsg->getM_Type() == 99)
+        {
+            output  << "received message with payload " << recMsg << " with ack number of "<< recMsg[1] << "and type of message " <<"data ack " << "at node " <<getIndex()<<"\n";
+            output.flush();
         }
         if (messageType == '0' && mmsg->getM_Type() == 99)
         {
+            output  << "received message with payload " << recMsg << " with sequence number of "<< recMsg[2]<<" with ack number of "<< recMsg[1] << "and type of message " <<"data piggybacked " << "at node " <<getIndex()<<"\n";
+            output.flush();
             if (recMsg[2] - '0' == receiverR)
             {
                 receiverR = (receiverR + 1) % (senderWindowSize + 1);
+
             }
             recMsg = recMsg.substr(3, recMsg.size() - 3);
             bubble(recMsg.c_str());
@@ -274,6 +285,7 @@ void Node::handleMessage(cMessage *msg)
     }
     else if (mmsg->getM_Type() == 50)
     {
+        //output<<"time out for frame number "<<
         retransmittedFrames += senderData.size();
         for (int i = 0; i < senderWindowSize; i++)
         {

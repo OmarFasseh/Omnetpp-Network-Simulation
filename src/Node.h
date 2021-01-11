@@ -36,6 +36,7 @@ protected:
   int senderNum;
   int n = -1;
   std::fstream my_file;
+  std::fstream output;
   bool finished = false;
   bool veryFinished = false;
   bool first = true;
