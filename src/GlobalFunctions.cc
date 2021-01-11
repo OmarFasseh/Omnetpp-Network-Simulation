@@ -83,7 +83,7 @@ vector<bool> removePadding(string payload, int payloadSize, int &charCount, int 
     }
     return messageWithHamming;
 }
-vector<bool> checkHamming(vector<bool> &ham, int charCount,const char * s)
+vector<bool> checkHamming(vector<bool> &ham, int charCount, const char *s)
 {
 
     int r = 0;
@@ -129,18 +129,21 @@ vector<bool> checkHamming(vector<bool> &ham, int charCount,const char * s)
         errorPos = errorPos << 1;
         errorPos |= errorBits[i];
     }
-     if (errorPos > 0 && errorPos<ham.size())
-     {
-    // EV << "Error at " << errorPos - 1 << endl;
-     //output.open("../txtFiles/logs.txt", std::ios_base::app);
-     output.flush();
-         output<<"hamming code corrected error at message "<<s<<"\n";
-     ham[errorPos - 1] = !ham[errorPos - 1];
-    // EV << "Message after correction : " << endl;
-    // for (int i = 0; i < ham.size(); i++)
-    // {
-    //     EV << ham[i] << " ";
-     }
+    if (errorPos > 0 && errorPos < ham.size())
+    {
+        // EV << "Error at " << errorPos - 1 << endl;
+        //output.open("../txtFiles/logs.txt", std::ios_base::app);
+        output.flush();
+        output.open("../txtFiles/logs.txt", std::ios_base::app);
+        output << "hamming code corrected error at message " << s << "\n";
+        output.close();
+
+        ham[errorPos - 1] = !ham[errorPos - 1];
+        // EV << "Message after correction : " << endl;
+        // for (int i = 0; i < ham.size(); i++)
+        // {
+        //     EV << ham[i] << " ";
+    }
     // EV << endl;
     // }
     // else
@@ -166,7 +169,7 @@ vector<bool> checkHamming(vector<bool> &ham, int charCount,const char * s)
     */
     return payloadBits;
 }
-string unHam(const char *payload, int payloadSize, int paddingSize,int charCount)
+string unHam(const char *payload, int payloadSize, int paddingSize, int charCount)
 {
     int c;
     vector<bool> ham = removePadding(payload, payloadSize, c, paddingSize);
